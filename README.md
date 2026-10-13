@@ -17,13 +17,14 @@ Aplicación web diseñada para llevar el control de los videojuegos en posesión
 * **¿Por qué el resumen se calcula en el backend?**
   Mantiene la lógica de negocio centralizada en la capa de servicio (`videojuegos.service.ts`), evitando duplicidad de lógica en el cliente y garantizando consistencia.
 
-## 3. Fórmula del Resumen Calculado
+### 3. Fórmula del Resumen Calculado
 Al consultar `GET /api/videojuegos/:id/resumen`:
-1. `totalPartidas`: Conteo total de documentos en la colección `Partida` cuyo campo `videojuego` coincide con el `:id`.
-2. `horasTotales`: Suma del campo `duracionMinutos` de todas las partidas del juego, dividida para 60 y redondeada a un decimal:
+
+1. **`totalPartidas`**: Conteo total de documentos en la colección `Partida` cuyo campo `videojuego` coincide con el `:id`.
+2. **`horasTotales`**: Suma del campo `duracionMinutos` de todas las partidas del juego, dividida para 60 y redondeada a un decimal:
    $$\text{horasTotales} = \operatorname{round}\left(\frac{\sum \text{duracionMinutos}}{60}, 1\right)$$
-3. `ultimaPartida`: La fecha (`fecha`) del registro de partida más reciente.
-4. `porcentajeAvanceActual`: El `porcentajeAvance` guardado en la partida más reciente.
+3. **`ultimaSesion`**: La fecha (`fecha`) más reciente entre las partidas registradas para ese videojuego.
+4. **`porcentajeAvanceActual`**: El valor de `porcentajeAvance` correspondiente a la partida más reciente.
 
 ## 4. Instalación y Ejecución Local
 
