@@ -28,6 +28,10 @@ Al consultar `GET /api/videojuegos/:id/resumen`:
 
 ## 4. Instalación y Ejecución Local
 
+### Prerrequisitos
+* Node.js (v18+)
+* Cuenta y cluster en MongoDB Atlas
+
 ### Backend
 ```bash
 cd backend
