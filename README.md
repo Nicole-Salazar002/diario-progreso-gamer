@@ -22,7 +22,7 @@ Al consultar `GET /api/videojuegos/:id/resumen`:
 
 1. **`totalPartidas`**: Conteo total de documentos en la colección `Partida` cuyo campo `videojuego` coincide con el `:id`.
 2. **`horasTotales`**: Suma del campo `duracionMinutos` de todas las partidas del juego, dividida para 60 y redondeada a un decimal:
-   $$\text{horasTotales} = \operatorname{round}\left(\frac{\sum \text{duracionMinutos}}{60}, 1\right)$$
+   * **Fórmula:** `round( Suma(duracionMinutos) / 60, 1 )`
 3. **`ultimaSesion`**: La fecha (`fecha`) más reciente entre las partidas registradas para ese videojuego.
 4. **`porcentajeAvanceActual`**: El valor de `porcentajeAvance` correspondiente a la partida más reciente.
 
