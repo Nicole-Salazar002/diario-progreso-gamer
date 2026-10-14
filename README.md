@@ -39,6 +39,13 @@ npm install
 # Configurar .env basado en .env.example
 npm run dev
 ```
+### Frontend
+```bash
+cd frontend
+npm install
+# Configurar .env basado en .env.example
+npm run dev
+```
 
 ## 5. Links Públicos
 * **Backend:** [API desplegada](https://diario-progreso-gamer.onrender.com)
