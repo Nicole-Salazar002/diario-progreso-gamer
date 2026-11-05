@@ -167,3 +167,4 @@ El servicio consulta videojuego, partidas y meta activa y delega todos los cálc
 
 - La creación de un índice único parcial puede depender de los índices ya creados en MongoDB. La implementación debe comprobar que el índice se puede crear sin alterar ni borrar datos existentes y reportar conflictos de datos históricos.
 - La estrategia de atomicidad de la eliminación del videojuego y sus registros debe verificarse en MongoDB Atlas/Render. Si transacciones no están disponibles en el entorno, no se puede afirmar atomicidad; sí debe demostrarse que la política acordada no deja huérfanos al terminar con éxito.
+- T-06 ejecuta en transacción los cambios de estado que desactivan metas y la eliminación de un videojuego con sus registros. El MongoDB de despliegue debe soportar transacciones (replica set o clúster fragmentado); se debe verificar esta capacidad con una prueba de integración antes de desplegar.
