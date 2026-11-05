@@ -7,6 +7,7 @@ import { loggerMiddleware } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
 import videojuegosRoutes from './routes/videojuegos.routes';
 import partidasRoutes from './routes/partidas.routes';
+import metasRoutes from './routes/metas.routes';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(loggerMiddleware);
 
 app.use('/api/videojuegos', videojuegosRoutes);
 app.use('/api/partidas', partidasRoutes);
+app.use('/api/metas', metasRoutes);
 
 app.use(errorHandler);
 

@@ -68,6 +68,12 @@ test('rechaza la creación si el videojuego no existe', async () => {
   });
 });
 
+test('rechaza una solicitud sin ID de videojuego con 400', async () => {
+  await assert.rejects(servicio.crearMeta({ ...entradaMeta, videojuego: '' }), (error: unknown) =>
+    error instanceof AppError && error.statusCode === 400
+  );
+});
+
 test('rechaza la creación si el videojuego está completado o abandonado', async () => {
   await conReemplazos([
     { objetivo: Videojuego, propiedad: 'findById', valor: async () => ({ estado: 'completado' }) }
@@ -131,7 +137,7 @@ test('lista metas históricas de un videojuego existente', async () => {
 });
 
 test('actualiza solo las reglas de la Meta y conserva videojuego y estado', async () => {
-  const actualizada = { _id: 'meta-id', videojuego: 'juego-id', activa: true, ...entradaMeta };
+  const actualizada = { ...entradaMeta, _id: 'meta-id', videojuego: 'juego-id', activa: true };
   let argumentosActualizacion: unknown[] = [];
   await conReemplazos([
     {
@@ -149,6 +155,12 @@ test('actualiza solo las reglas de la Meta y conserva videojuego y estado', asyn
   assert.equal(argumentosActualizacion[0], 'meta-id');
   assert.deepEqual(argumentosActualizacion[1], { horasSemanales: 8 });
   assert.deepEqual(argumentosActualizacion[2], { new: true, runValidators: true });
+});
+
+test('rechaza una actualización sin campos editables con 400', async () => {
+  await assert.rejects(servicio.actualizarMeta('meta-id', {}), (error: unknown) =>
+    error instanceof AppError && error.statusCode === 400
+  );
 });
 
 test('desactiva una Meta existente sin eliminarla', async () => {
