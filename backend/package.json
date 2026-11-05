@@ -6,7 +6,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
-    "test": "tsx --test src/dominio/progreso.test.ts src/middleware/errorHandler.test.ts src/models/Meta.test.ts src/services/metas.service.test.ts src/services/progreso.service.test.ts src/services/videojuegos.service.test.ts"
+    "test": "tsx --test src/dominio/progreso.test.ts src/middleware/errorHandler.test.ts src/models/Meta.test.ts src/services/metas.service.test.ts src/services/partidas.service.test.ts src/services/progreso.service.test.ts src/services/videojuegos.service.test.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
