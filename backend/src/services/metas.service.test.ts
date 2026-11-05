@@ -89,6 +89,19 @@ test('rechaza una segunda Meta activa con 409', async () => {
   });
 });
 
+test('convierte el conflicto del índice único en 409', async () => {
+  const errorDuplicado = Object.assign(new Error('duplicate key'), { code: 11000 });
+  await conReemplazos([
+    { objetivo: Videojuego, propiedad: 'findById', valor: async () => ({ estado: 'jugando' }) },
+    { objetivo: Meta, propiedad: 'findOne', valor: async () => null },
+    { objetivo: Meta, propiedad: 'create', valor: async () => { throw errorDuplicado; } }
+  ], async () => {
+    await assert.rejects(servicio.crearMeta(entradaMeta), (error: unknown) =>
+      error instanceof AppError && error.statusCode === 409
+    );
+  });
+});
+
 test('consulta una Meta por id y devuelve 404 si no existe', async () => {
   const meta = { _id: 'meta-id', activa: false };
   await conReemplazos([
