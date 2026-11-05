@@ -34,6 +34,15 @@ export const DetalleVideojuego: React.FC = () => {
       setError(err instanceof Error ? err.message : 'No se pudo desactivar la meta.');
     }
   };
+  const eliminarPartida = async (partida: IPartida) => {
+    if (!window.confirm('¿Eliminar esta sesión? Esta acción no se puede deshacer.')) return;
+    try {
+      await partidasApi.eliminar(partida._id);
+      await cargarDatos();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo eliminar la partida.');
+    }
+  };
   if (loading) return <div className="panel state-panel"><span className="loader"/> Cargando detalle del videojuego…</div>;
   if (error) return <div className="alert-error" role="alert">{error}<button className="button button-quiet" onClick={cargarDatos}>Reintentar</button></div>;
   if (!juego) return <div className="panel empty-state"><h3>No se encontró el videojuego</h3><Link to="/">Volver a la biblioteca</Link></div>;
@@ -43,7 +52,7 @@ export const DetalleVideojuego: React.FC = () => {
   if (!progresoSemanal) return <div className="alert-error" role="alert">No se pudo cargar el progreso semanal.<button className="button button-quiet" onClick={cargarDatos}>Reintentar</button></div>;
   return <><Link to="/" className="back-link">← Volver a la biblioteca</Link>
     <section className="detail-hero"><div className="detail-art"><span>✦</span><div>🎮</div>{juego.portadaUrl && <img src={juego.portadaUrl} alt={`Portada de ${juego.nombre}`} onError={e => { e.currentTarget.style.display = 'none'; }}/>}</div>
-      <div className="detail-copy"><span className={`status-badge status-${juego.estado}`}>{juego.estado}</span><h2>{juego.nombre}</h2><p>{juego.plataforma} <span>·</span> {juego.genero}</p><div className="detail-actions"><Link className="button button-primary" to="/partidas/nueva">＋ Registrar sesión</Link><span className="detail-subtle">{partidas.length} sesiones registradas</span></div></div>
+      <div className="detail-copy"><span className={`status-badge status-${juego.estado}`}>{juego.estado}</span><h2>{juego.nombre}</h2><p>{juego.plataforma} <span>·</span> {juego.genero}</p><div className="detail-actions"><Link className="button button-primary" to={`/partidas/nueva?videojuego=${juego._id}`}>＋ Registrar sesión</Link><span className="detail-subtle">{partidas.length} sesiones registradas</span></div></div>
       <div className="detail-progress"><strong>{resumen?.porcentajeAvanceActual ?? 0}<small>%</small></strong><span>avance actual</span><div className="progress-track"><i style={{ width: `${resumen?.porcentajeAvanceActual ?? 0}%` }}/></div></div>
     </section>
     <section className="section-heading detail-section-heading"><div><span className="eyebrow">ESTADÍSTICAS</span><h2>Tu progreso</h2></div></section>
@@ -54,7 +63,7 @@ export const DetalleVideojuego: React.FC = () => {
       onCrearMeta={() => setFormularioMetaAbierto(true)}
     />
     <div className="detail-columns"><section className="panel detail-panel"><div className="panel-heading"><div><span className="eyebrow">OBJETIVOS</span><h3>Logros <span className="count-pill">{completos}/{juego.logros.length}</span></h3></div></div>{juego.logros.length === 0 ? <div className="inline-empty">Todavía no hay logros para este juego.</div> : <ul className="achievement-list detail-achievements">{juego.logros.map(l => <li key={l._id}><label className={l.obtenido ? 'achievement-done' : ''}><input type="checkbox" checked={l.obtenido} onChange={() => toggleLogro(l._id!, l.obtenido)}/><span className="check-custom">✓</span><span>{l.nombre}</span></label>{l.obtenido && <span className="achievement-new">OBTENIDO</span>}</li>)}</ul>}</section>
-      <section className="panel detail-panel"><div className="panel-heading"><div><span className="eyebrow">TU HISTORIA</span><h3>Sesiones recientes</h3></div><Link className="text-link" to="/partidas/nueva">＋ Añadir</Link></div>{partidas.length === 0 ? <div className="inline-empty">Registra una partida para empezar tu historial.</div> : <div className="session-list">{partidas.map(p => <article className="session-row" key={p._id}><span className="session-date">{new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span><div className="session-data"><strong>{p.duracionMinutos} min de juego</strong><span>{p.notas || 'Sesión registrada'}</span></div><span className="session-percent">{p.porcentajeAvance}%</span></article>)}</div>}</section></div>
+      <section className="panel detail-panel"><div className="panel-heading"><div><span className="eyebrow">TU HISTORIA</span><h3>Sesiones recientes</h3></div><Link className="text-link" to={`/partidas/nueva?videojuego=${juego._id}`}>＋ Añadir</Link></div>{partidas.length === 0 ? <div className="inline-empty">Registra una partida para empezar tu historial.</div> : <div className="session-list">{partidas.map(p => <article className="session-row" key={p._id}><span className="session-date">{new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span><div className="session-data"><strong>{p.duracionMinutos} min de juego</strong><span>{p.notas || 'Sesión registrada'}</span></div><span className="session-percent">{p.porcentajeAvance}%</span><div className="session-actions"><Link className="button button-secondary" aria-label="Editar partida" to={`/partidas/${p._id}/editar`}>Editar</Link><button className="button button-quiet" type="button" aria-label="Eliminar partida" onClick={() => eliminarPartida(p)}>Eliminar</button></div></article>)}</div>}</section></div>
     {(metaActiva || formularioMetaAbierto) && <section className="panel goal-panel" aria-labelledby="goal-panel-title">
       <div className="panel-heading">
         <div><span className="eyebrow">RITMO A TU MEDIDA</span><h3 id="goal-panel-title">Meta semanal</h3></div>
