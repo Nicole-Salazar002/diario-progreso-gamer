@@ -35,7 +35,7 @@ Todas las rutas usan el prefijo existente `/api`.
 | `PUT /api/metas/:id` | Actualiza horas, días e hitos de la meta existente. No cambia su videojuego ni su estado. |
 | `PATCH /api/metas/:id/desactivar` | Desactiva una meta activa y conserva el registro. |
 | `GET /api/partidas/:id` | Devuelve una partida existente para precargar el formulario de edición. |
-| `PUT /api/partidas/:id` | Actualiza los campos editables de una partida existente; no crea una nueva. |
+| `PUT /api/partidas/:id` | Actualiza fecha, duración, avance y/o notas de una partida existente; no crea una nueva ni permite cambiar su videojuego. |
 | `GET /api/videojuegos/:id/progreso-semanal` | Devuelve las métricas de la semana actual, rachas y estado actual de los hitos. |
 
 Las rutas de consulta por videojuego deben registrarse antes de `/:id` en el router de metas para evitar que la ruta general capture ese segmento.
@@ -95,6 +95,7 @@ El servicio consulta videojuego, partidas y meta activa y delega todos los cálc
 - Eliminar un videojuego elimina sus partidas y todas sus metas embebidas con sus hitos; no pueden quedar registros relacionados huérfanos.
 - El contrato de `GET /api/videojuegos/:id/resumen` y la funcionalidad existente de videojuegos y partidas se mantienen, salvo los ajustes de ciclo de vida expresamente descritos aquí.
 - Editar una partida actualiza el registro existente. Las entradas inválidas responden 400 y un ID válido sin partida responde 404.
+- La edición de una partida acepta uno o más de estos campos: `fecha`, `duracionMinutos`, `porcentajeAvance` y `notas`. Rechaza un cuerpo vacío y propiedades no editables; aplica los validadores del modelo y conserva la referencia al videojuego.
 
 ## Requisitos
 

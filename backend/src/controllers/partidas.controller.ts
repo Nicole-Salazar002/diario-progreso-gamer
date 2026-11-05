@@ -15,10 +15,24 @@ export const getPorVideojuego = async (req: Request, res: Response, next: NextFu
   } catch (error) { next(error); }
 };
 
+export const getPorId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const partida = await service.obtenerPartidaPorId(req.params.id);
+    res.json(partida);
+  } catch (error) { next(error); }
+};
+
 export const crear = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const nueva = await service.crearPartida(req.body);
     res.status(201).json(nueva);
+  } catch (error) { next(error); }
+};
+
+export const actualizar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const partida = await service.actualizarPartida(req.params.id, req.body);
+    res.json(partida);
   } catch (error) { next(error); }
 };
 

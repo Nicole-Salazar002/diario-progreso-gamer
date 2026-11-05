@@ -105,8 +105,9 @@ test('rechaza una edición sin campos editables', async () => {
 });
 
 test('rechaza propiedades no editables en lugar de modificar la referencia', async () => {
+  const entradaConVideojuego = { ...entradaEdicion, videojuego: 'otro-juego' };
   await assert.rejects(
-    servicio.actualizarPartida('partida-id', { ...entradaEdicion, videojuego: 'otro-juego' }),
+    servicio.actualizarPartida('partida-id', entradaConVideojuego),
     (error: unknown) => error instanceof AppError && error.statusCode === 400
   );
 });
@@ -128,4 +129,19 @@ test('propaga errores de validación del modelo para que el middleware responda 
       error => error === errorValidacion
     );
   });
+});
+
+test('el modelo rechaza duración y porcentaje fuera de sus rangos', () => {
+  const partida = new Partida({
+    videojuego: '507f1f77bcf86cd799439011',
+    fecha: new Date('2026-11-05T17:00:00.000Z'),
+    duracionMinutos: 0,
+    porcentajeAvance: 101
+  });
+
+  const error = partida.validateSync();
+
+  assert.ok(error);
+  assert.ok(error.errors.duracionMinutos);
+  assert.ok(error.errors.porcentajeAvance);
 });
