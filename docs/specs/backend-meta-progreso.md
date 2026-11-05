@@ -34,6 +34,8 @@ Todas las rutas usan el prefijo existente `/api`.
 | `GET /api/metas/videojuego/:videojuegoId` | Devuelve la lista de metas del videojuego, incluidas las inactivas, ordenadas de más reciente a más antigua. Si el videojuego existe y no tiene metas, devuelve `[]`. |
 | `PUT /api/metas/:id` | Actualiza horas, días e hitos de la meta existente. No cambia su videojuego ni su estado. |
 | `PATCH /api/metas/:id/desactivar` | Desactiva una meta activa y conserva el registro. |
+| `GET /api/partidas/:id` | Devuelve una partida existente para precargar el formulario de edición. |
+| `PUT /api/partidas/:id` | Actualiza los campos editables de una partida existente; no crea una nueva. |
 | `GET /api/videojuegos/:id/progreso-semanal` | Devuelve las métricas de la semana actual, rachas y estado actual de los hitos. |
 
 Las rutas de consulta por videojuego deben registrarse antes de `/:id` en el router de metas para evitar que la ruta general capture ese segmento.
@@ -136,7 +138,7 @@ El servicio consulta videojuego, partidas y meta activa y delega todos los cálc
 | CA-03.3, CA-03.4 | Pruebas puras con fecha de referencia fija: hoy sin partida y ayer con partida; ausencia tanto hoy como ayer. |
 | CA-03.5, CA-03.6 | Pruebas puras de racha histórica más larga, huecos entre fechas e historial vacío. |
 | CA-04.1–CA-04.4 | Pruebas puras para avance menor, igual y mayor que el objetivo, avance que disminuye e historial sin partidas. |
-| CA-07.1–CA-07.3 | Pruebas de servicio/ruta para actualizar una Partida existente, validación 400 y recurso inexistente 404. |
+| CA-07.1–CA-07.3 | Pruebas de servicio/ruta para consultar una Partida por ID, actualizarla sin duplicar, rechazar datos inválidos con 400 e informar partida inexistente con 404. |
 | CA-08.1, CA-08.2 | Pruebas de servicio para transición a completado/abandonado y regreso a otro estado sin reactivación. |
 | CA-08.3 | Prueba de integración de eliminación que comprueba ausencia del Videojuego, sus Partidas y todas sus Metas después de la operación. |
 | T-05: errores 400/404/409/500 | Pruebas unitarias del `errorHandler` por categoría; comprobar código, forma del JSON y que el 500 no revela detalles internos. |
