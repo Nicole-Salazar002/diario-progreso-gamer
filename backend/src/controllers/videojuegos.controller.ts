@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/videojuegos.service';
+import * as progresoService from '../services/progreso.service';
 
 export const getTodos = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -50,5 +51,12 @@ export const getResumen = async (req: Request, res: Response, next: NextFunction
   try {
     const resumen = await service.obtenerResumenVideojuego(req.params.id);
     res.json(resumen);
+  } catch (error) { next(error); }
+};
+
+export const getProgresoSemanal = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const progreso = await progresoService.obtenerProgresoSemanal(req.params.id);
+    res.json(progreso);
   } catch (error) { next(error); }
 };
