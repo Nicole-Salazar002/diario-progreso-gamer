@@ -1,4 +1,4 @@
-import { IVideojuego, IResumen } from '../types';
+import { IVideojuego, IResumen, IProgresoSemanal } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -54,6 +54,12 @@ export const videojuegosApi = {
   obtenerResumen: async (id: string): Promise<IResumen> => {
     const res = await fetch(`${API_URL}/videojuegos/${id}/resumen`);
     if (!res.ok) throw new Error('Error al obtener el resumen del videojuego');
+    return res.json();
+  },
+
+  obtenerProgresoSemanal: async (id: string): Promise<IProgresoSemanal> => {
+    const res = await fetch(`${API_URL}/videojuegos/${id}/progreso-semanal`);
+    if (!res.ok) throw new Error('Error al obtener el progreso semanal del videojuego');
     return res.json();
   }
 };

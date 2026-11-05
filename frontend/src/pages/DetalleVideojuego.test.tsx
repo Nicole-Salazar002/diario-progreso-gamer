@@ -11,6 +11,7 @@ vi.mock('../services/videojuegosApi', () => ({
   videojuegosApi: {
     obtenerPorId: vi.fn(),
     obtenerResumen: vi.fn(),
+    obtenerProgresoSemanal: vi.fn(),
     actualizarLogro: vi.fn()
   }
 }));
@@ -44,6 +45,16 @@ const meta = {
   activa: true,
   hitos: []
 };
+const progreso = {
+  semana: { inicio: '2026-11-02', fin: '2026-11-08' },
+  meta: { horasSemanales: 5, diasPorSemana: 4 },
+  horasSemana: 3.5,
+  porcentajeHoras: 70,
+  diasJugadosSemana: 3,
+  rachaActual: 2,
+  mejorRacha: 4,
+  hitos: [{ descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50, alcanzado: true }]
+};
 
 const renderDetalle = () => render(
   <MemoryRouter
@@ -66,6 +77,7 @@ describe('gestión de meta en el detalle', () => {
       ultimaPartida: null,
       porcentajeAvanceActual: 0
     });
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue(progreso);
     vi.mocked(partidasApi.obtenerPorVideojuego).mockResolvedValue([]);
     vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([meta]);
     vi.mocked(metasApi.desactivar).mockResolvedValue(meta);
@@ -79,6 +91,9 @@ describe('gestión de meta en el detalle', () => {
     vi.mocked(metasApi.obtenerPorVideojuego)
       .mockResolvedValueOnce([meta])
       .mockResolvedValueOnce([]);
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal)
+      .mockResolvedValueOnce(progreso)
+      .mockResolvedValueOnce({ ...progreso, meta: null, porcentajeHoras: null, hitos: [] });
     renderDetalle();
 
     await screen.findByText('5 horas');
@@ -88,7 +103,7 @@ describe('gestión de meta en el detalle', () => {
 
     await user.click(screen.getByRole('button', { name: 'Desactivar' }));
     await waitFor(() => expect(metasApi.desactivar).toHaveBeenCalledWith('meta-id'));
-    expect(await screen.findByText('Aún no tienes una meta activa para este juego.')).toBeInTheDocument();
+    expect(await screen.findByText('Define una meta semanal para comparar tus horas y días de juego.')).toBeInTheDocument();
     expect(metasApi.obtenerPorVideojuego).toHaveBeenCalledTimes(2);
   });
 
@@ -98,11 +113,69 @@ describe('gestión de meta en el detalle', () => {
       estado: 'completado'
     });
     vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([]);
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue({
+      ...progreso,
+      meta: null,
+      porcentajeHoras: null,
+      hitos: []
+    });
     renderDetalle();
 
     expect(await screen.findByText(
       'No se puede crear una meta activa para un juego completado o abandonado.'
     )).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Crear meta' })).not.toBeInTheDocument();
+  });
+
+  it('muestra la respuesta semanal del servidor con sus horas, rachas e hitos', async () => {
+    renderDetalle();
+
+    expect(await screen.findByText('Progreso semanal')).toBeInTheDocument();
+    expect(screen.getByText('2026-11-02')).toBeInTheDocument();
+    expect(screen.getByText('3.5')).toBeInTheDocument();
+    expect(screen.getByText('70% de tu objetivo')).toBeInTheDocument();
+    expect(screen.getByText('Llegar al 50 % · 50%')).toBeInTheDocument();
+    expect(screen.getByText('Alcanzado')).toBeInTheDocument();
+    expect(screen.getByText('Mejor racha: 4 días')).toBeInTheDocument();
+  });
+
+  it('muestra horas y rachas sin inventar porcentaje ni objetivos cuando no hay meta', async () => {
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue({
+      ...progreso,
+      meta: null,
+      porcentajeHoras: null,
+      hitos: []
+    });
+    vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([]);
+    renderDetalle();
+
+    expect(await screen.findByText('Sin objetivo de horas activo')).toBeInTheDocument();
+    expect(screen.getByText('Define una meta semanal para comparar tus horas y días de juego.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Crear meta' })).toBeInTheDocument();
+    expect(screen.queryByText(/% de tu objetivo/)).not.toBeInTheDocument();
+  });
+
+  it('mantiene el estado de carga hasta recibir el progreso del servidor', async () => {
+    let resolver: ((value: typeof progreso) => void) | undefined;
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal)
+      .mockImplementationOnce(() => new Promise(resolve => { resolver = resolve; }));
+    renderDetalle();
+
+    expect(screen.getByText(/Cargando detalle del videojuego/)).toBeInTheDocument();
+    resolver?.(progreso);
+    expect(await screen.findByText('Progreso semanal')).toBeInTheDocument();
+  });
+
+  it('muestra un error en vez de ceros y permite reintentar la consulta', async () => {
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal)
+      .mockRejectedValueOnce(new Error('Servicio de progreso no disponible'))
+      .mockResolvedValueOnce(progreso);
+    renderDetalle();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Servicio de progreso no disponible');
+    expect(screen.queryByText('Progreso semanal')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reintentar' }));
+    expect(await screen.findByText('Progreso semanal')).toBeInTheDocument();
   });
 });
