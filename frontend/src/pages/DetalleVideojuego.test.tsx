@@ -18,7 +18,8 @@ vi.mock('../services/videojuegosApi', () => ({
 
 vi.mock('../services/partidasApi', () => ({
   partidasApi: {
-    obtenerPorVideojuego: vi.fn()
+    obtenerPorVideojuego: vi.fn(),
+    eliminar: vi.fn()
   }
 }));
 
@@ -55,6 +56,14 @@ const progreso = {
   mejorRacha: 4,
   hitos: [{ descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50, alcanzado: true }]
 };
+const partida = {
+  _id: 'partida-id',
+  videojuego: 'juego-id',
+  fecha: '2026-11-05T17:00:00.000Z',
+  duracionMinutos: 60,
+  porcentajeAvance: 25,
+  notas: 'Sesión de prueba'
+};
 
 const renderDetalle = () => render(
   <MemoryRouter
@@ -63,6 +72,7 @@ const renderDetalle = () => render(
   >
     <Routes>
       <Route path="/videojuegos/:id" element={<DetalleVideojuego />} />
+      <Route path="/partidas/:id/editar" element={<div>Edición de partida</div>} />
     </Routes>
   </MemoryRouter>
 );
@@ -77,10 +87,45 @@ describe('gestión de meta en el detalle', () => {
       ultimaPartida: null,
       porcentajeAvanceActual: 0
     });
+
     vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue(progreso);
     vi.mocked(partidasApi.obtenerPorVideojuego).mockResolvedValue([]);
+    vi.mocked(partidasApi.eliminar).mockResolvedValue();
     vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([meta]);
     vi.mocked(metasApi.desactivar).mockResolvedValue(meta);
+  });
+
+  it('cancela el borrado o elimina y vuelve a cargar partidas, resumen y progreso', async () => {
+    const user = userEvent.setup();
+    const confirmar = vi.spyOn(window, 'confirm')
+      .mockReturnValueOnce(false)
+      .mockReturnValueOnce(true);
+    let resolverPartidas: ((partidas: Array<typeof partida>) => void) | undefined;
+    vi.mocked(partidasApi.obtenerPorVideojuego)
+      .mockResolvedValueOnce([partida])
+      .mockImplementationOnce(() => new Promise(resolve => { resolverPartidas = resolve; }));
+    renderDetalle();
+
+    await screen.findByText('60 min de juego');
+    expect(await screen.findByRole('link', { name: 'Editar partida' })).toHaveAttribute(
+      'href',
+      '/partidas/partida-id/editar'
+    );
+    await user.click(screen.getByRole('button', { name: 'Eliminar partida' }));
+    expect(confirmar).toHaveBeenCalledOnce();
+    expect(partidasApi.eliminar).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: 'Eliminar partida' }));
+    expect(await screen.findByText(/Cargando detalle del videojuego/)).toBeInTheDocument();
+    expect(screen.queryByText('60 min de juego')).not.toBeInTheDocument();
+    expect(partidasApi.eliminar).toHaveBeenCalledWith('partida-id');
+    resolverPartidas?.([]);
+    await waitFor(() => {
+      expect(partidasApi.obtenerPorVideojuego).toHaveBeenCalledTimes(2);
+      expect(videojuegosApi.obtenerResumen).toHaveBeenCalledTimes(2);
+      expect(videojuegosApi.obtenerProgresoSemanal).toHaveBeenCalledTimes(2);
+    });
+    expect(screen.queryByText('60 min de juego')).not.toBeInTheDocument();
   });
 
   it('no desactiva si se cancela la confirmación y actualiza la lista si se confirma', async () => {
