@@ -29,11 +29,22 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     });
   }
 
-  // 3. Error de Referencia o Recurso Inexistente (AppError 404 personalizado)
+  // 3. Errores de aplicación con estado conocido
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      error: 'NO_ENCONTRADO',
-      message: err.message
+    const respuestas: Record<number, { error: string; message: string }> = {
+      400: { error: 'ERROR_VALIDACION', message: err.message },
+      404: { error: 'NO_ENCONTRADO', message: err.message },
+      409: { error: 'CONFLICTO', message: err.message }
+    };
+    const respuesta = respuestas[err.statusCode];
+
+    if (respuesta) {
+      return res.status(err.statusCode).json(respuesta);
+    }
+
+    return res.status(500).json({
+      error: 'ERROR_INTERNO',
+      message: 'Ha ocurrido un error inesperado en el servidor.'
     });
   }
 

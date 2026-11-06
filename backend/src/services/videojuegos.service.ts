@@ -1,6 +1,19 @@
+import mongoose, { ClientSession } from 'mongoose';
 import { Videojuego, IVideojuego } from '../models/Videojuego';
 import { Partida } from '../models/Partida';
+import { Meta } from '../models/Meta';
 import { AppError } from '../middleware/errorHandler';
+
+const ejecutarEnTransaccion = async <T>(
+  operacion: (session: ClientSession) => Promise<T>
+): Promise<T> => {
+  const session = await mongoose.startSession();
+  try {
+    return await session.withTransaction(() => operacion(session));
+  } finally {
+    await session.endSession();
+  }
+};
 
 export const obtenerTodosVideojuegos = async (filtroEstado?: string) => {
   const query = filtroEstado ? { estado: filtroEstado } : {};
@@ -18,17 +31,37 @@ export const crearVideojuego = async (data: Partial<IVideojuego>) => {
 };
 
 export const actualizarVideojuego = async (id: string, data: Partial<IVideojuego>) => {
+  if (data.estado === 'completado' || data.estado === 'abandonado') {
+    return ejecutarEnTransaccion(async session => {
+      const juego = await Videojuego.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+        session
+      });
+      if (!juego) throw new AppError('Videojuego no encontrado', 404);
+
+      await Meta.updateMany(
+        { videojuego: id, activa: true },
+        { $set: { activa: false } },
+        { session }
+      );
+      return juego;
+    });
+  }
+
   const juego = await Videojuego.findByIdAndUpdate(id, data, { new: true, runValidators: true });
   if (!juego) throw new AppError('Videojuego no encontrado', 404);
   return juego;
 };
 
 export const eliminarVideojuego = async (id: string) => {
-  const juego = await Videojuego.findByIdAndDelete(id);
-  if (!juego) throw new AppError('Videojuego no encontrado', 404);
-  // Opcional: Eliminar sus partidas asociadas
-  await Partida.deleteMany({ videojuego: id });
-  return juego;
+  return ejecutarEnTransaccion(async session => {
+    await Meta.deleteMany({ videojuego: id }, { session });
+    await Partida.deleteMany({ videojuego: id }, { session });
+    const juego = await Videojuego.findByIdAndDelete(id, { session });
+    if (!juego) throw new AppError('Videojuego no encontrado', 404);
+    return juego;
+  });
 };
 
 // Operación sobre sub-documento embebido (marcar o actualizar logro)

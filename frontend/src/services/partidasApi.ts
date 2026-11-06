@@ -15,6 +15,15 @@ export const partidasApi = {
     return res.json();
   },
 
+  obtenerPorId: async (id: string): Promise<IPartida> => {
+    const res = await fetch(`${API_URL}/partidas/${id}`);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Error al cargar la partida');
+    }
+    return res.json();
+  },
+
   crear: async (partida: Partial<IPartida>): Promise<IPartida> => {
     const res = await fetch(`${API_URL}/partidas`, {
       method: 'POST',
@@ -24,6 +33,19 @@ export const partidasApi = {
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.message || 'Error al registrar la partida');
+    }
+    return res.json();
+  },
+
+  actualizar: async (id: string, partida: Partial<IPartida>): Promise<IPartida> => {
+    const res = await fetch(`${API_URL}/partidas/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(partida)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Error al actualizar la partida');
     }
     return res.json();
   },

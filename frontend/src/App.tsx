@@ -25,6 +25,7 @@ function App() {
         <Route path="/videojuegos/:id" element={<DetalleVideojuego />} />
         <Route path="/partidas" element={<ListaPartidas />} />
         <Route path="/partidas/nueva" element={<FormularioPartida />} />
+        <Route path="/partidas/:id/editar" element={<FormularioPartida />} />
       </Routes></div>
       <footer className="app-footer">PLAYERLOG <span>·</span> Tu historia, partida a partida</footer>
     </main>

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/block-env-edit.cjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

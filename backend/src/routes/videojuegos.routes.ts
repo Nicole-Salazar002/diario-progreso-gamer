@@ -7,6 +7,7 @@ const router = Router();
 
 router.get('/', ctrl.getTodos);
 router.post('/', ctrl.crear);
+router.get('/:id/progreso-semanal', ctrl.getProgresoSemanal);
 router.get('/:id', ctrl.getPorId);
 router.put('/:id', ctrl.actualizar);
 router.delete('/:id', ctrl.eliminar);
