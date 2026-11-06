@@ -60,6 +60,7 @@ Este backlog descompone [el PRD aprobado](../prd/PRD.md) en historias, criterios
 
 - **CA-06.1 — Crear y editar la meta.** DADO el detalle de un videojuego, CUANDO creo o edito su meta y sus hitos con datos válidos, ENTONCES el detalle refleja los valores guardados.
 - **CA-06.2 — Confirmar desactivación.** DADA una meta activa, CUANDO solicito desactivarla, ENTONCES se pide confirmación y solo se desactiva al confirmar.
+- **CA-06.3 — Ajustar campos numéricos.** DADO el formulario de meta, CUANDO aumento o reduzco horas, días o porcentaje de hito con sus controles visibles, ENTONCES el valor cambia sin superar los límites y también puede ingresarse por teclado.
 
 ### HU-07 · Corregir una partida registrada
 
@@ -78,29 +79,57 @@ Este backlog descompone [el PRD aprobado](../prd/PRD.md) en historias, criterios
 - **CA-08.2 — No reactivar automáticamente.** DADO un videojuego cuya meta se desactivó al completarlo o abandonarlo, CUANDO vuelve a otro estado, ENTONCES la meta permanece inactiva hasta que la persona cree una nueva.
 - **CA-08.3 — Eliminar registros dependientes.** DADO un videojuego con partidas y metas, CUANDO se elimina el videojuego, ENTONCES también se eliminan sus partidas y todas sus metas e hitos asociados.
 
+### HU-09 · Consultar el progreso semanal de todos los videojuegos
+
+**Como** persona que registra varios videojuegos, **quiero** consultar el progreso semanal de cada uno desde una vista general, **para** encontrar rápidamente qué juegos estoy siguiendo y abrir su detalle.
+
+- **CA-09.1 — Acceso desde la navegación.** DADA la aplicación, CUANDO consulto la navegación, ENTONCES encuentro el acceso «Mi progreso» que abre la vista `/progreso`.
+- **CA-09.2 — Resumen por videojuego.** DADA una biblioteca con videojuegos, CUANDO abro «Mi progreso», ENTONCES veo por juego las horas, días, racha actual y mejor racha entregados por el servidor.
+- **CA-09.3 — Abrir detalle.** DADO un juego en la vista general, CUANDO selecciono su enlace, ENTONCES se abre el detalle de ese videojuego.
+- **CA-09.4 — Carga, error y vacío.** DADA la carga de la vista, CUANDO aún espera datos, falla una consulta o la biblioteca está vacía, ENTONCES cada estado se comunica de forma distinta y el error permite reintentar.
+- **CA-09.5 — No duplicar reglas.** DADA la respuesta del backend, CUANDO se muestra el resumen general, ENTONCES no se recalculan semanas, días ni rachas en el navegador ni se inventa una racha global.
+
+### HU-10 · Leer el progreso con claridad y accesibilidad
+
+**Como** persona que consulta el detalle de un videojuego, **quiero** distinguir sus métricas de horas, días y rachas, **para** comprender el progreso sin solapamientos ni depender solo del color.
+
+- **CA-10.1 — Jerarquía adaptable.** DADO el detalle y el progreso semanal, CUANDO se muestran títulos y métricas en distintas anchuras, ENTONCES el contenido se adapta sin solapamientos ni pérdida de legibilidad.
+- **CA-10.2 — Estado accesible de la racha.** DADO el indicador visual de racha, CUANDO se recorre con tecnologías de asistencia o se consulta visualmente, ENTONCES conserva nombre accesible y texto de racha actual y mejor racha.
+- **CA-10.3 — Teclado y movimiento reducido.** DADO el listado de hitos y sus animaciones, CUANDO se navega con teclado o la persona prefiere menos movimiento, ENTONCES el foco es visible y las animaciones nuevas se reducen o desactivan.
+
+### HU-11 · Ajustar los campos numéricos con controles visibles
+
+**Como** persona que registra metas y partidas, **quiero** aumentar o reducir los valores numéricos con controles claros, **para** editarlos con precisión sin exceder sus límites.
+
+- **CA-11.1 — Controles accesibles.** DADO un campo numérico de meta o partida, CUANDO lo edito, ENTONCES veo botones accesibles para aumentar y reducir el valor y puedo seguir escribiéndolo directamente.
+- **CA-11.2 — Respetar límites.** DADO un campo con mínimo, máximo y paso definidos, CUANDO llego a un límite, ENTONCES el control correspondiente se deshabilita y ningún botón permite salir del rango.
+- **CA-11.3 — Duración sin máximo artificial.** DADO el campo de duración de una partida sin máximo configurado, CUANDO aumento su valor, ENTONCES puedo seguir aumentándolo sin un tope arbitrario.
+- **CA-11.4 — Unidad y foco visibles.** DADO un campo con unidad como porcentaje, CUANDO navego con teclado o cambio el valor, ENTONCES la unidad permanece dentro del grupo visual del campo y el foco de sus controles es visible.
+
 ## Tickets
 
 Los tickets de pruebas del dominio preceden a la implementación correspondiente. La spec debe confirmar los archivos y el orden exactos antes de iniciar cualquier cambio de código.
 
-| ID | Tipo | Alcance | Definition of Done | Dependencias |
-|---|---|---|---|---|
-| T-01 | Pruebas | Añadir pruebas automatizadas sin base de datos para los criterios verificables de semana, suma y redondeo, días distintos, rachas, sesión que cruza medianoche e hitos. | Cada criterio de dominio aplicable tiene una prueba; las pruebas fallan si se elimina la regla y pasan con el comportamiento acordado; el comando de pruebas queda documentado y ejecutado. | — |
-| T-02 | Backend | Implementar el cálculo puro de semana, horas, días jugados, racha actual, mejor racha e hitos conforme a T-01. | Todas las pruebas de T-01 pasan; la lógica recibe datos y fecha de referencia, no consulta la base de datos, y el build backend pasa. | T-01 |
-| T-03 | Backend | Crear y administrar metas; validar límites, videojuego existente y máximo de una meta activa; permitir consultar por id y por videojuego, actualizar y desactivar. | Los criterios HU-01 tienen pruebas; duplicados activos responden 409 con mensaje claro; metas desactivadas se conservan; build backend pasa. | T-05 |
-| T-04 | Backend | Exponer el progreso semanal integrando partidas, meta activa, cálculo de dominio, rachas e hitos; informar videojuego inexistente y ausencia de meta según lo acordado. | Los criterios HU-02, HU-03 y HU-04 tienen pruebas; se verifican juego sin partidas y juego con al menos cinco partidas en días distintos y una racha rota; errores de id y recurso se comprueban; build backend pasa. | T-02, T-03, T-05 |
-| T-05 | Deuda / Backend | Corregir el manejo centralizado de errores para que las respuestas distingan 400, 404, 409 y 500. Paga el hallazgo B-08 del diagnóstico. | Hay pruebas por cada categoría, incluida la respuesta 409; no se filtran detalles internos en 500; los errores existentes mantienen respuesta útil; build backend pasa. | — |
-| T-06 | Deuda / Backend | Extender la política de ciclo de vida para desactivar la meta al completar o abandonar el juego y eliminar metas y partidas al borrar el juego. Paga el hallazgo B-07 del diagnóstico. | Los criterios HU-08 tienen pruebas de estado, reactivación y eliminación; no quedan metas ni partidas huérfanas tras la operación; la estrategia funciona en el entorno MongoDB objetivo y build backend pasa. | T-03 |
-| T-07 | Backend | Permitir editar una partida existente con validación y referencia correcta, de acuerdo con la necesidad de refrescar el progreso después de editar. | Hay pruebas de actualización válida, entrada inválida y partida inexistente; la edición conserva el videojuego asociado salvo cambio permitido por el contrato; build backend pasa. | T-05 |
-| T-08 | Frontend | Crear un servicio independiente para consultar, crear, editar y desactivar metas, y un formulario accesible para horas, días e hitos. | Los criterios HU-06.1 y HU-06.2 están cubiertos; se validan límites antes de guardar, se muestra el error del servidor, y el build frontend y lint pasan. | T-03 |
-| T-09 | Frontend | Incorporar al detalle la sección de progreso semanal, estados de carga/error/vacío, comparación de horas y días, rachas e hitos. | Los criterios HU-05.1–HU-05.3 están cubiertos; “sin meta” invita a crear una; estilos respetan `DESIGN.md`; build frontend y lint pasan. | T-04, T-08 |
-| T-10 | Frontend | Incorporar edición de partidas y actualizar los datos visibles del detalle después de crear, editar o eliminar una partida. | Los criterios HU-07.1–HU-07.4 están cubiertos; los errores de guardado se muestran y no se presenta progreso obsoleto como actualizado; build frontend y lint pasan. | T-07, T-09 |
+| ID | Tipo | Alcance | Definition of Done | Dependencias | Estado y evidencia |
+|---|---|---|---|---|---|
+| T-01 | Pruebas | Añadir pruebas automatizadas sin base de datos para los criterios verificables de semana, suma y redondeo, días distintos, rachas, sesión que cruza medianoche e hitos. | Cada criterio de dominio aplicable tiene una prueba; las pruebas fallan si se elimina la regla y pasan con el comportamiento acordado; el comando de pruebas queda documentado y ejecutado. | — | Hecho: pruebas puras en `backend/src/dominio/progreso.test.ts`; incluidas en `npm test`. |
+| T-02 | Backend | Implementar el cálculo puro de semana, horas, días jugados, racha actual, mejor racha e hitos conforme a T-01. | Todas las pruebas de T-01 pasan; la lógica recibe datos y fecha de referencia, no consulta la base de datos, y el build backend pasa. | T-01 | Hecho: pruebas de dominio y `npm run build` pasan. |
+| T-03 | Backend | Crear y administrar metas; validar límites, videojuego existente y máximo de una meta activa; permitir consultar por id y por videojuego, actualizar y desactivar. | Los criterios HU-01 tienen pruebas; duplicados activos responden 409 con mensaje claro; metas desactivadas se conservan; build backend pasa. | T-05 | Hecho en código y pruebas de modelo/servicio; falta validar el índice y el conflicto concurrente contra Atlas de prueba. |
+| T-04 | Backend | Exponer el progreso semanal integrando partidas, meta activa, cálculo de dominio, rachas e hitos; informar videojuego inexistente y ausencia de meta según lo acordado. | Los criterios HU-02, HU-03 y HU-04 tienen pruebas; se verifican juego sin partidas y juego con al menos cinco partidas en días distintos y una racha rota; errores de id y recurso se comprueban; build backend pasa. | T-02, T-03, T-05 | Hecho en pruebas de servicio (incluyen cinco partidas y racha rota) y build; falta prueba manual con ID válido en Atlas/Render y registrar la matriz HTTP. |
+| T-05 | Deuda / Backend | Corregir el manejo centralizado de errores para que las respuestas distingan 400, 404, 409 y 500. Paga el hallazgo B-08 del diagnóstico. | Hay pruebas por cada categoría, incluida la respuesta 409; no se filtran detalles internos en 500; los errores existentes mantienen respuesta útil; build backend pasa. | — | Hecho: `errorHandler.test.ts` cubre 400/404/409/500 y el build pasa. |
+| T-06 | Deuda / Backend | Extender la política de ciclo de vida para desactivar la meta al completar o abandonar el juego y eliminar metas y partidas al borrar el juego. Paga el hallazgo B-07 del diagnóstico. | Los criterios HU-08 tienen pruebas de estado, reactivación y eliminación; no quedan metas ni partidas huérfanas tras la operación; la estrategia funciona en el entorno MongoDB objetivo y build backend pasa. | T-03 | Hecho en código y pruebas con dobles; pendiente confirmar transacciones, eliminación y ausencia de huérfanos en Atlas de prueba. |
+| T-07 | Backend | Permitir editar una partida existente con validación y referencia correcta, de acuerdo con la necesidad de refrescar el progreso después de editar. | Hay pruebas de actualización válida, entrada inválida y partida inexistente; la edición conserva el videojuego asociado salvo cambio permitido por el contrato; build backend pasa. | T-05 | Hecho en código y pruebas de servicio para lectura, edición, validación y 404; falta prueba HTTP manual de GET/PUT con datos de juego de prueba. |
+| T-08 | Frontend | Crear un servicio independiente para consultar, crear, editar y desactivar metas, y un formulario accesible para horas, días e hitos. | Los criterios HU-06.1 y HU-06.2 están cubiertos; se validan límites antes de guardar, se muestra el error del servidor, y el build frontend y lint pasan. | T-03 | Hecho: pruebas del formulario y servicios; build y lint configurado/ejecutado. |
+| T-09 | Frontend | Incorporar al detalle la sección de progreso semanal, estados de carga/error/vacío, comparación de horas y días, rachas e hitos. | Los criterios HU-05.1–HU-05.3 están cubiertos; “sin meta” invita a crear una; estilos respetan `DESIGN.md`; build frontend y lint pasan. | T-04, T-08 | Hecho en pruebas y build; evidencia visual compartida para escritorio. Pendiente revisar móvil, teclado y foco en el navegador. |
+| T-10 | Frontend | Incorporar edición de partidas y actualizar los datos visibles del detalle después de crear, editar o eliminar una partida. | Los criterios HU-07.1–HU-07.4 están cubiertos; los errores de guardado se muestran y no se presenta progreso obsoleto como actualizado; build frontend y lint pasan. | T-07, T-09 | Hecho en pruebas de UI y build/lint; pendiente repetir el flujo en navegador y adjuntar evidencia visual. |
+| T-11 | Frontend | Agregar una vista de progreso semanal por videojuego en `/progreso`, con enlaces a los detalles y estados de carga, error y biblioteca vacía. | Los criterios HU-09 tienen pruebas con servicios simulados; cada tarjeta usa datos del servidor; build y lint frontend pasan. | T-09 | Hecho en `ProgresoUsuario.tsx`; prueba de componente con valores, reintento y biblioteca vacía; build y lint pasan. |
+| T-12 | Frontend | Mejorar la jerarquía visual y accesibilidad del detalle y del progreso semanal siguiendo `DESIGN.md`. | Los criterios HU-10 tienen prueba de accesibilidad del indicador; estilos responden a anchuras, foco visible y `prefers-reduced-motion`; build/lint pasan y revisión móvil/teclado queda registrada. | T-09 | Hecho en estilos y prueba del indicador; build/lint pasan. Falta revisión manual en móvil y teclado. |
+| T-13 | Frontend | Incorporar controles numéricos accesibles y reutilizables para metas y partidas, con límites por campo y unidades integradas. | Los criterios HU-11 tienen pruebas de meta, duración y avance; límites deshabilitan el control correcto; unidades y foco son legibles; build/lint frontend pasan. | T-07, T-08 | Hecho en `ControlNumero.tsx` y formularios; pruebas de interacción y build/lint pasan. Pendiente completar revisión manual con teclado. |
 
 ## Deuda técnica diferida
 
 | Hallazgo del diagnóstico | Decisión | Motivo para diferir |
 |---|---|---|
-| B-09: la copia recibida no tenía historial previo ni remoto Git. | Pendiente de obtener y confirmar el repositorio GitHub correcto; no reconstruir historial ni publicar sin autorización/destino correcto. | Requiere el remoto del propietario; es necesario para el PR final, no para el trabajo local. |
-| D-01: README indica Node 18+ aunque el encargo requiere Node 20+. | Actualizar el README en el ticket de documentación de entrega y comprobar los comandos con Node 20+. | No afecta la lógica de E2, pero sí debe quedar corregido antes de la entrega. |
 | D-02: el README dice `ultimaSesion` y el resumen implementado devuelve `ultimaPartida`. | Mantener el contrato existente y verificar qué nombre usa el cliente antes de decidir un cambio. | Cambiarlo sin evidencia podría romper compatibilidad con el Proyecto 3. |
 | D-03: el resumen carga todas las partidas para calcular sus agregados. | Medir y probar antes de optimizar. | No hay evidencia de un problema de rendimiento; una reescritura sin medición añade riesgo al resumen que se quiere conservar. |
 | Métrica mensual “3 de 4 semanas” para meses con semanas parciales o cinco semanas. | Mantener como pregunta abierta del PRD. | E2 no incluye historial mensual y la ficha no define qué cuatro semanas se comparan. |
@@ -109,6 +138,6 @@ Los tickets de pruebas del dominio preceden a la implementación correspondiente
 ## Notas de trazabilidad
 
 - Los criterios HU-01 a HU-08 se derivan de las reglas y alcance del PRD y del diagnóstico aprobado.
-- T-05 y T-06 son los dos ciclos planificados para pagar problemas del diagnóstico; para darlos por pagados deberán completarse criterios, pruebas, código y verificación.
+- T-05 está pagado con código, pruebas y build. T-06 está implementado y tiene pruebas automatizadas, pero no se declara cerrado hasta verificar transacciones en un Atlas de prueba.
 - T-01 se implementa y verifica antes del código de dominio T-02.
 - Cada spec se registra en Git antes de los tickets de código que describe. Este backlog no autoriza a implementar antes de que las specs de backend y frontend estén revisadas.
