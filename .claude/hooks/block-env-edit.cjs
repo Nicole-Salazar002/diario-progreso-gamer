@@ -12,9 +12,19 @@ process.stdin.on('end', () => {
   }
 
   const paths = [];
+  const collectPatchPaths = value => {
+    if (typeof value !== 'string') return;
+    const matcher = /^\*\*\* (?:Add|Update|Delete) File: (.+)$/gm;
+    let match;
+    while ((match = matcher.exec(value)) !== null) paths.push(match[1].trim());
+    const moveMatcher = /^\*\*\* Move to: (.+)$/gm;
+    while ((match = moveMatcher.exec(value)) !== null) paths.push(match[1].trim());
+  };
+
   const collectPaths = (value, key = '') => {
-    if (typeof value === 'string' && /(?:file.?path|filename|^path$|^file$)/i.test(key)) {
-      paths.push(value);
+    if (typeof value === 'string') {
+      if (/(?:file.?path|filename|^path$|^file$)/i.test(key)) paths.push(value);
+      collectPatchPaths(value);
       return;
     }
 

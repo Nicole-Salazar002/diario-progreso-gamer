@@ -10,3 +10,43 @@
  .table-actions{display:flex;gap:5px;flex-wrap:wrap}@media (min-width: 1000px){.session-row{display:grid;grid-template-columns:58px minmax(0,1fr) auto;row-gap:8px}.session-data{min-width:0}.session-actions{grid-column:2/4;display:flex;justify-content:flex-end;gap:6px}.session-actions .button,.table-actions .button{padding:7px 10px;font-size:10px}}
 @media (max-width: 999px){.session-row{flex-wrap:wrap}.session-data{flex:1;min-width:0}.session-actions{width:100%;display:flex;justify-content:flex-end;gap:6px}}
 @media (max-width: 650px){.table-actions{display:flex;flex-direction:column;gap:5px}.table-actions .button{padding:7px 9px;font-size:10px}}
+
+/* Ajustes de lectura y adaptación del detalle del videojuego */
+.detail-hero, .detail-columns, .weekly-progress-panel, .goal-panel { min-width: 0; }
+.detail-hero { grid-template-columns: minmax(110px, 150px) minmax(0, 1fr) minmax(100px, 125px); }
+.detail-copy, .detail-panel, .weekly-stat { min-width: 0; }
+.detail-copy h2, .weekly-milestones li > span:nth-child(2) { overflow-wrap: anywhere; }
+.detail-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.session-row { min-width: 0; }
+.session-actions { flex-wrap: wrap; }
+.weekly-stat { position: relative; overflow: hidden; }
+.weekly-hours-stat { background: radial-gradient(ellipse at 100% 0%, #7064c52b, transparent 55%), linear-gradient(145deg,#292a55,#222348); }
+.weekly-days-stat { background: radial-gradient(ellipse at 100% 0%, #568ad02b, transparent 55%), linear-gradient(145deg,#292a55,#222348); }
+.weekly-streak-stat { min-height: 176px; padding: 15px 17px; border-color: #a587ff66; background: radial-gradient(circle at 82% 34%, #ffae4230, transparent 34%), linear-gradient(145deg,#383064,#242449 75%); box-shadow: inset 0 0 24px #9e70ff12, 0 8px 24px #15142c55; }
+.weekly-streak-stat::after { content:''; position:absolute; inset:auto -20px -47px auto; width:125px; height:125px; border:1px solid #d6a15435; border-radius:50%; box-shadow:0 0 0 12px #d6a1540b,0 0 0 25px #d6a15408; pointer-events:none; }
+.weekly-streak-stat .streak-label { color:#f3bf78; font-size:9px; font-weight:800; letter-spacing:1.4px; }
+.weekly-streak-stat .streak-flame { position:absolute; top:13px; right:15px; font-size:22px; filter:drop-shadow(0 0 10px #ff8b4666); animation:flame-bob 2s ease-in-out infinite; }
+.weekly-streak-stat .streak-orbit { position:absolute; top:43px; right:22px; color:#ffe2a6; animation:orbit-turn 8s linear infinite; }
+.weekly-streak-stat > strong { color:#fff1d4; font-size:30px; text-shadow:0 0 19px #ffbd6355; }
+.weekly-streak-stat > span:last-of-type { color:#d2bedc; }
+.streak-dots { position:relative; z-index:1; display:flex; gap:5px; margin-top:3px; }
+.streak-dots i { width:12px; height:5px; border-radius:5px; background:linear-gradient(90deg,#ffbf69,#fc7758); box-shadow:0 0 9px #ff985b55; animation:streak-pulse 1.8s ease-in-out infinite alternate; }
+.streak-dots i:nth-child(2n) { animation-delay:.4s; }
+.milestone-track li { transition:transform .2s ease,border-color .2s ease,background .2s ease; }
+.milestone-track li:hover, .milestone-track li:focus-visible { transform:translateX(4px); border-color:#9283ef88; background:#7770da16; outline:2px solid #8daaff; outline-offset:2px; }
+.milestone-track .milestone-reached { border-color:#7bd9b33d; background:linear-gradient(90deg,#62d7a40f,transparent 70%); }
+.milestone-reached .milestone-status { color:#87e0b5; }
+.weekly-progress-track i { position:relative; overflow:hidden; animation:progress-fill .9s cubic-bezier(.2,.8,.2,1) both; }
+.weekly-progress-track i::after { content:''; position:absolute; inset:0; background:linear-gradient(110deg,transparent 20%,#ffffff65 48%,transparent 72%); transform:translateX(-120%); animation:progress-shine 2.8s ease-in-out 1s infinite; }
+@keyframes flame-bob { 50% { transform:translateY(-4px) rotate(4deg); } }
+@keyframes orbit-turn { to { transform:rotate(360deg); } }
+@keyframes streak-pulse { to { opacity:.55; transform:scaleX(.78); transform-origin:left; } }
+@keyframes progress-fill { from { transform:scaleX(.15); transform-origin:left; } to { transform:scaleX(1); transform-origin:left; } }
+@keyframes progress-shine { 55%,100% { transform:translateX(120%); } }
+@media(max-width:1050px) and (min-width:761px) { .detail-hero { grid-template-columns:minmax(95px,120px) minmax(0,1fr); } .detail-progress { grid-column:1/-1; width:100%; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:0 12px; text-align:left; } .detail-progress>strong { grid-row:span 2; } .detail-progress>span { margin:0 0 7px; } .detail-progress .progress-track { grid-column:2; } }
+@media(max-width:760px) { .detail-hero { grid-template-columns:minmax(75px,95px) minmax(0,1fr); } .detail-columns { grid-template-columns:minmax(0,1fr); } .weekly-streak-stat { min-height:155px; } .weekly-milestones li { min-width:0; } .session-actions { width:100%; } }
+@media(max-width:420px) { .weekly-progress-panel, .goal-panel, .detail-panel { padding:13px; } .detail-hero { grid-template-columns:72px minmax(0,1fr); gap:10px; padding:12px; } .detail-art { height:92px; } .detail-copy h2 { font-size:16px; } .detail-actions { align-items:flex-start; flex-direction:column; } .detail-actions .button { max-width:100%; } .weekly-stats { gap:9px; } .weekly-stat { padding:12px; } }
+@media(prefers-reduced-motion:reduce) { .weekly-streak-stat .streak-flame, .weekly-streak-stat .streak-orbit, .streak-dots i, .weekly-progress-track i, .weekly-progress-track i::after { animation:none; } .milestone-track li { transition:none; } }
+
+/* Espacio entre el progreso semanal y las secciones inferiores */
+.detail-columns { margin-top: 18px; }

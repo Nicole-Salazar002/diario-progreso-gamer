@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { videojuegosApi } from '../services/videojuegosApi';
 import { partidasApi } from '../services/partidasApi';
@@ -17,14 +17,14 @@ export const DetalleVideojuego: React.FC = () => {
   const [formularioMetaAbierto, setFormularioMetaAbierto] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     if (!id) return;
     try { setLoading(true); setError(null); const [j, p, r, m, progreso] = await Promise.all([videojuegosApi.obtenerPorId(id), partidasApi.obtenerPorVideojuego(id), videojuegosApi.obtenerResumen(id), metasApi.obtenerPorVideojuego(id), videojuegosApi.obtenerProgresoSemanal(id)]); setJuego(j); setPartidas(p); setResumen(r); setMetas(m); setProgresoSemanal(progreso); }
-    catch (err: any) { setError(err.message || 'Error al cargar los datos'); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Error al cargar los datos'); }
     finally { setLoading(false); }
-  };
-  useEffect(() => { cargarDatos(); }, [id]);
-  const toggleLogro = async (logroId: string, actual: boolean) => { if (!id) return; try { setJuego(await videojuegosApi.actualizarLogro(id, logroId, !actual)); } catch (err: any) { setError(err.message); } };
+  }, [id]);
+  useEffect(() => { void cargarDatos(); }, [cargarDatos]);
+  const toggleLogro = async (logroId: string, actual: boolean) => { if (!id) return; try { setJuego(await videojuegosApi.actualizarLogro(id, logroId, !actual)); } catch (err) { setError(err instanceof Error ? err.message : 'No se pudo actualizar el logro.'); } };
   const desactivarMeta = async (meta: IMeta) => {
     if (!window.confirm('¿Desactivar esta meta? Se conservará en el historial y podrás crear otra más adelante.')) return;
     try {

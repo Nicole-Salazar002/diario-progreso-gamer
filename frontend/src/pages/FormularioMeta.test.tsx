@@ -99,6 +99,49 @@ describe('FormularioMeta', () => {
     expect(metasApi.crear).not.toHaveBeenCalled();
   });
 
+  it('ofrece controles visibles para sumar y restar respetando los límites', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormularioMeta
+        videojuegoId={videojuegoId}
+        meta={meta}
+        onGuardado={vi.fn()}
+        onCancelar={vi.fn()}
+      />
+    );
+
+    const horas = screen.getByLabelText(/Horas por semana/);
+    await user.click(screen.getByRole('button', { name: 'Aumentar horas por semana' }));
+    expect(horas).toHaveValue(5.5);
+    await user.click(screen.getByRole('button', { name: 'Reducir horas por semana' }));
+    expect(horas).toHaveValue(5);
+
+    const dias = screen.getByLabelText(/Días por semana/);
+    await user.click(screen.getByRole('button', { name: 'Reducir días por semana' }));
+    expect(dias).toHaveValue(3);
+    await user.click(screen.getByRole('button', { name: 'Aumentar días por semana' }));
+    expect(dias).toHaveValue(4);
+
+    const avance = screen.getByLabelText(/Avance objetivo/);
+    await user.click(screen.getByRole('button', { name: 'Aumentar porcentaje del hito 1' }));
+    expect(avance).toHaveValue(51);
+  });
+
+  it('deshabilita los controles que ya están en el mínimo o máximo', () => {
+    render(
+      <FormularioMeta
+        videojuegoId={videojuegoId}
+        meta={{ ...meta, horasSemanales: 100, diasPorSemana: 1, hitos: [{ descripcion: 'Fin', porcentajeObjetivo: 100 }] }}
+        onGuardado={vi.fn()}
+        onCancelar={vi.fn()}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Aumentar horas por semana' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Reducir días por semana' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aumentar porcentaje del hito 1' })).toBeDisabled();
+  });
+
   it('muestra el error del servidor y conserva los valores del formulario', async () => {
     const user = userEvent.setup();
     vi.mocked(metasApi.crear).mockRejectedValueOnce(new Error('Ya existe una meta activa'));

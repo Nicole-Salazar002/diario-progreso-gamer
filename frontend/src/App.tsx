@@ -1,6 +1,8 @@
 import { NavLink, Routes, Route, Link } from 'react-router-dom';
-import { ListaVideojuegos, DetalleVideojuego, FormularioVideojuego, ListaPartidas, FormularioPartida } from './pages/index';
+import { ListaVideojuegos, DetalleVideojuego, FormularioVideojuego, ListaPartidas, FormularioPartida, ProgresoUsuario } from './pages/index';
 import './styles.css';
+import './progreso.css';
+import './fondo.css';
 
 function App() {
   return <div className="app-shell">
@@ -10,10 +12,12 @@ function App() {
       <nav className="side-nav">
         <NavLink end to="/" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}><span>▦</span> Mis videojuegos</NavLink>
         <NavLink to="/partidas" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}><span>◷</span> Historial de partidas</NavLink>
+        <NavLink to="/progreso" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'} aria-label="Mi progreso"><span aria-hidden="true">✦</span> Mi progreso</NavLink>
       </nav>
       <div className="side-label">ACCESOS RÁPIDOS</div>
       <Link className="nav-item" to="/videojuegos/nuevo"><span>＋</span> Añadir videojuego</Link>
       <Link className="nav-item" to="/partidas/nueva"><span>⌁</span> Registrar sesión</Link>
+      <Link className="nav-item quick-progress-link" to="/progreso"><span aria-hidden="true">✦</span> Ver mi progreso</Link>
       <div className="sidebar-note"><span className="note-icon">✧</span><strong>Cada sesión cuenta</strong><p>Guarda tus momentos, celebra tus avances y sigue jugando.</p></div>
       <div className="profile"><span className="avatar">🎮</span><span><strong>Jugador</strong><small>Tu aventura continúa</small></span><span className="online-dot" /></div>
     </aside>
@@ -24,6 +28,7 @@ function App() {
         <Route path="/videojuegos/nuevo" element={<FormularioVideojuego />} />
         <Route path="/videojuegos/:id" element={<DetalleVideojuego />} />
         <Route path="/partidas" element={<ListaPartidas />} />
+        <Route path="/progreso" element={<ProgresoUsuario />} />
         <Route path="/partidas/nueva" element={<FormularioPartida />} />
         <Route path="/partidas/:id/editar" element={<FormularioPartida />} />
       </Routes></div>

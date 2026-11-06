@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { videojuegosApi } from '../services/videojuegosApi';
 import { IVideojuego } from '../types';
@@ -10,8 +10,18 @@ export const ListaVideojuegos: React.FC = () => {
   const [filtro, setFiltro] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const cargar = async () => { try { setLoading(true); setError(null); setJuegos(await videojuegosApi.obtenerTodos(filtro || undefined)); } catch (err: any) { setError(err.message || 'Error al cargar los videojuegos'); } finally { setLoading(false); } };
-  useEffect(() => { cargar(); }, [filtro]);
+  const cargar = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setJuegos(await videojuegosApi.obtenerTodos(filtro || undefined));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al cargar los videojuegos');
+    } finally {
+      setLoading(false);
+    }
+  }, [filtro]);
+  useEffect(() => { void cargar(); }, [cargar]);
   const jugando = juegos.filter(j => j.estado === 'jugando').length;
   return <>
     <section className="welcome-banner"><div className="banner-copy"><span className="eyebrow light">TU COLECCIÓN PERSONAL</span><h2>Tu próxima gran<br/>aventura empieza aquí.</h2><p>Registra tus juegos y lleva el seguimiento de cada logro.</p><Link className="button button-light" to="/videojuegos/nuevo">＋ Añadir videojuego</Link></div><div className="banner-orbit orbit-one"/><div className="banner-orbit orbit-two"/><div className="banner-art">🎮</div><span className="banner-spark">✦</span></section>

@@ -5,3 +5,4 @@ export * from './ListaPartidas';
 export * from './FormularioPartida';
 export * from './FormularioMeta';
 export * from './ProgresoSemanal';
+export * from './ProgresoUsuario';

@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { ActualizarMetaInput, CrearMetaInput, metasApi } from '../services/metasApi';
 import { IHitoMeta, IMeta } from '../types';
+import { ControlNumero } from '../components/ControlNumero';
 
 interface FormularioMetaProps {
   videojuegoId: string;
@@ -82,28 +83,26 @@ export const FormularioMeta: React.FC<FormularioMetaProps> = ({
       <div className="field-grid">
         <label className="field" htmlFor="goal-hours">
           <span>Horas por semana <small>0–100</small></span>
-          <input
+          <ControlNumero
             id="goal-hours"
-            type="number"
-            min="0.01"
-            max="100"
-            step="any"
-            required
-            value={horasSemanales}
-            onChange={event => setHorasSemanales(event.target.value)}
+            valor={horasSemanales}
+            alCambiar={setHorasSemanales}
+            minimo={0.01}
+            maximo={100}
+            paso={0.5}
+            etiqueta="horas por semana"
           />
         </label>
         <label className="field" htmlFor="goal-days">
           <span>Días por semana <small>1–7</small></span>
-          <input
+          <ControlNumero
             id="goal-days"
-            type="number"
-            min="1"
-            max="7"
-            step="1"
-            required
-            value={diasPorSemana}
-            onChange={event => setDiasPorSemana(event.target.value)}
+            valor={diasPorSemana}
+            alCambiar={setDiasPorSemana}
+            minimo={1}
+            maximo={7}
+            paso={1}
+            etiqueta="días por semana"
           />
         </label>
       </div>
@@ -122,14 +121,14 @@ export const FormularioMeta: React.FC<FormularioMetaProps> = ({
             </label>
             <label className="field" htmlFor={`goal-milestone-percent-${indice}`}>
               <span>Avance objetivo <small>1–100%</small></span>
-              <input
+              <ControlNumero
                 id={`goal-milestone-percent-${indice}`}
-                type="number"
-                min="1"
-                max="100"
-                step="any"
-                value={hito.porcentajeObjetivo}
-                onChange={event => actualizarHito(indice, { porcentajeObjetivo: Number(event.target.value) })}
+                valor={String(hito.porcentajeObjetivo)}
+                alCambiar={valor => actualizarHito(indice, { porcentajeObjetivo: Number(valor) })}
+                minimo={1}
+                maximo={100}
+                paso={1}
+                etiqueta={`porcentaje del hito ${indice + 1}`}
               />
             </label>
             <button
