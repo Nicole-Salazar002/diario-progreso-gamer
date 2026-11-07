@@ -30,7 +30,7 @@ export const ProgresoSemanal: React.FC<ProgresoSemanalProps> = ({
       </div>
 
       <div className="weekly-stats">
-        <article className="weekly-stat">
+        <article className="weekly-stat weekly-hours-stat">
           <span>Horas jugadas</span>
           <strong>
             {progreso.horasSemana}
@@ -54,7 +54,7 @@ export const ProgresoSemanal: React.FC<ProgresoSemanalProps> = ({
             </>
           ) : <span>Sin objetivo de horas activo</span>}
         </article>
-        <article className="weekly-stat">
+        <article className="weekly-stat weekly-days-stat">
           <span>Días jugados</span>
           <strong>
             {progreso.diasJugadosSemana}
@@ -62,19 +62,27 @@ export const ProgresoSemanal: React.FC<ProgresoSemanalProps> = ({
           </strong>
           <span>{progreso.meta ? 'días de tu objetivo semanal' : 'esta semana'}</span>
         </article>
-        <article className="weekly-stat">
+        <article className="weekly-stat weekly-streak-stat">
+          <span className="streak-orbit" aria-hidden="true">✦</span>
+          <span className="streak-label">RACHA EN CURSO</span>
+          <span className="streak-flame" aria-hidden="true">🔥</span>
           <span>Racha actual</span>
           <strong>{progreso.rachaActual}<small> días</small></strong>
           <span>Mejor racha: {progreso.mejorRacha} días</span>
+          <div className="streak-dots" role="img" aria-label={`Racha actual de ${progreso.rachaActual} días`}>
+            {Array.from({ length: Math.min(7, Math.max(1, progreso.rachaActual)) }, (_, index) => (
+              <i key={index} aria-hidden="true" />
+            ))}
+          </div>
         </article>
       </div>
 
       {progreso.hitos.length > 0 && (
         <div className="weekly-milestones">
           <h4>Hitos de progreso</h4>
-          <ul>
+          <ul className="milestone-track">
             {progreso.hitos.map((hito, indice) => (
-              <li key={`${hito.descripcion}-${indice}`}>
+              <li className={hito.alcanzado ? 'milestone-reached' : ''} key={`${hito.descripcion}-${indice}`} tabIndex={0}>
                 <span className="milestone-status" aria-hidden="true">{hito.alcanzado ? '✓' : '○'}</span>
                 <span>{hito.descripcion} · {hito.porcentajeObjetivo}%</span>
                 <strong>{hito.alcanzado ? 'Alcanzado' : 'Pendiente'}</strong>

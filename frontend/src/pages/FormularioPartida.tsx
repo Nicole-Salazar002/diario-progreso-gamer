@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { videojuegosApi } from '../services/videojuegosApi';
 import { partidasApi } from '../services/partidasApi';
 import { IPartida, IVideojuego } from '../types';
+import { ControlNumero } from '../components/ControlNumero';
 
 const fechaLocalParaInput = (fecha: string) => {
   const date = new Date(fecha);
@@ -108,8 +109,8 @@ export const FormularioPartida: React.FC = () => {
             : <label className="field"><span>Videojuego</span><select value={videojuegoId} onChange={event => setVideojuegoId(event.target.value)}>{juegos.map(item => <option key={item._id} value={item._id}>{item.nombre} ({item.plataforma})</option>)}</select></label>}
         <label className="field"><span>Fecha y hora de la sesión</span><input required type="datetime-local" value={fecha} onChange={event => setFecha(event.target.value)}/></label>
         <div className="field-grid">
-          <label className="field"><span>Duración <small>MINUTOS</small></span><input required type="number" min="1" value={duracionMinutos} onChange={event => setDuracionMinutos(Number(event.target.value))}/></label>
-          <label className="field"><span>Avance registrado <small>0–100%</small></span><div className="number-suffix"><input required type="number" min="0" max="100" value={porcentajeAvance} onChange={event => setPorcentajeAvance(Number(event.target.value))}/><span>%</span></div></label>
+          <label className="field" htmlFor="session-duration"><span>Duración <small>MINUTOS</small></span><ControlNumero id="session-duration" valor={String(duracionMinutos)} alCambiar={valor => setDuracionMinutos(Number(valor))} minimo={1} paso={1} etiqueta="duración en minutos" /></label>
+          <label className="field" htmlFor="session-progress"><span>Avance registrado <small>0–100%</small></span><div className="number-suffix"><ControlNumero id="session-progress" valor={String(porcentajeAvance)} alCambiar={valor => setPorcentajeAvance(Number(valor))} minimo={0} maximo={100} paso={1} etiqueta="avance registrado"/><span>%</span></div></label>
         </div>
         <div className="live-progress"><div><span>Progreso de esta sesión</span><strong>{porcentajeAvance}%</strong></div><div className="progress-track"><i style={{ width: `${porcentajeAvance}%` }}/></div></div>
         <label className="field"><span>Notas de la sesión <small>OPCIONAL</small></span><textarea rows={4} value={notas} onChange={event => setNotas(event.target.value)} placeholder="¿Qué pasó en tu partida? ¿Algún momento memorable?"/></label>

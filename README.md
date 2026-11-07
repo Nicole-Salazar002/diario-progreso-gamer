@@ -29,7 +29,7 @@ Al consultar `GET /api/videojuegos/:id/resumen`:
 ## 4. Instalación y Ejecución Local
 
 ### Prerrequisitos
-* Node.js (v18+)
+* Node.js (v20+)
 * Cuenta y cluster en MongoDB Atlas
 
 ### Backend
@@ -43,10 +43,33 @@ npm run dev
 ```bash
 cd frontend
 npm install
-# Configurar .env basado en .env.example
+# Configurar VITE_API_URL en el entorno local usando .env.example como referencia
 npm run dev
 ```
 
-## 5. Links Públicos
+El backend requiere `MONGO_URI`; el frontend usa `VITE_API_URL` para localizar la API. Los archivos `.env` son locales y no se suben a Git. En Render, configura esas variables en los servicios correspondientes. No publiques credenciales ni URI de MongoDB.
+
+## 6. Cómo trabajamos con el agente
+
+El proyecto utiliza `AGENTS.md` como memoria de trabajo, `CLAUDE.md` como referencia a esas reglas, una skill en `.claude/skills/` y hooks en `.claude/settings.json`. `DESIGN.md` es la fuente de decisiones visuales.
+
+El flujo seguido para E2 fue Spec-Driven Development: diagnóstico en `docs/diagnostico.md`, decisiones de producto en `docs/prd/PRD.md`, épicas e historias en `docs/backlog/`, contratos verificables en `docs/specs/`, pruebas antes de implementar las reglas de dominio y revisión en `docs/AUDITORIA.md`. La bitácora está en `docs/bitacora-agente.md`.
+
+Para repetir las comprobaciones automatizadas:
+
+```bash
+cd backend
+npm test
+npm run build
+
+cd ../frontend
+npm test
+npm run lint
+npm run build
+```
+
+La auditoría distingue entre pruebas automatizadas y verificaciones manuales de Atlas, Render, accesibilidad y demo. Consulta también el [guion de demo](docs/guion-demo.md) y registra allí la evidencia final al realizarla.
+
+## 7. Links Públicos
 * **Backend:** [API desplegada](https://diario-progreso-gamer.onrender.com)
 * **Frontend:** [Aplicación web](https://diario-progreso-gamer-1.onrender.com)

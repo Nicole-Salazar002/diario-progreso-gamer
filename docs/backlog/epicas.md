@@ -25,5 +25,8 @@ La épica E2 conserva esta experiencia; cualquier cambio al resumen existente de
 - Reflejar en el detalle del videojuego el progreso cuando cambian las partidas registradas.
 - Desactivar la meta de un videojuego completado o abandonado y eliminar metas e historial relacionado al eliminar el videojuego.
 - Ofrecer estados comprensibles cuando se carga el progreso, ocurre un error o aún no hay meta activa.
+- Dar acceso a una vista general del progreso semanal por videojuego desde la navegación, sin recalcular métricas en el frontend.
+- Presentar las métricas del detalle con jerarquía adaptable, foco visible y respeto por movimiento reducido.
+- Unificar el control de campos numéricos de metas y partidas, sin limitar campos que no tienen máximo de producto.
 
 Las reglas de negocio y puntos abiertos de E2 se detallan en [el PRD](../prd/PRD.md).

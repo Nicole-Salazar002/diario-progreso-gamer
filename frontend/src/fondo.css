@@ -1,0 +1,17 @@
+/* Brillo ambiental inspirado en la referencia, sin recursos externos. */
+body {
+  background-color: #23083c;
+  background-image:
+    radial-gradient(ellipse 48% 38% at 20% 10%, rgba(224, 93, 255, .68), transparent 76%),
+    radial-gradient(ellipse 34% 56% at 78% 32%, rgba(103, 35, 231, .62), transparent 78%),
+    radial-gradient(ellipse 36% 34% at 31% 57%, rgba(183, 48, 237, .28), transparent 78%),
+    radial-gradient(ellipse 52% 45% at 82% 88%, rgba(15, 5, 35, .83), transparent 78%),
+    linear-gradient(112deg, transparent 35%, rgba(228, 136, 255, .10) 41%, transparent 48%),
+    linear-gradient(72deg, transparent 61%, rgba(164, 91, 255, .13) 66%, transparent 73%),
+    linear-gradient(135deg, #32094f 0%, #681b91 44%, #260844 100%);
+  background-attachment: fixed;
+}
+
+@media (max-width: 760px) {
+  body { background-attachment: scroll; }
+}

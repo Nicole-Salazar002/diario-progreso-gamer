@@ -22,6 +22,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 
 - El formulario se muestra desde la sección de progreso del detalle; no requiere una ruta de página independiente.
 - Permite ingresar horas semanales, días por semana y hasta cinco hitos, cada uno con descripción y porcentaje objetivo.
+- Los campos numéricos de horas, días y porcentaje de hito ofrecen controles visibles para incrementar y reducir, respetando sus límites y permitiendo también la entrada directa por teclado.
 - Valida en cliente los mismos límites visibles del contrato backend; la respuesta de error del servidor se muestra de forma legible y no se descarta.
 - Sin meta activa se crea una nueva Meta. Con meta activa se editan horas, días e hitos sin cambiar el videojuego ni el estado de la Meta.
 - Desactivar una Meta solicita confirmación nativa del navegador. Si se cancela, no se envía la solicitud; si se confirma, se desactiva y se vuelve a consultar el detalle.
@@ -53,6 +54,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 - Invitar a crear una meta cuando no haya una activa y el videojuego no esté completado ni abandonado.
 - Presentar explícitamente carga, error y vacío; permitir reintentar los datos que fallaron.
 - Proveer un formulario accesible para crear/editar Meta y sus hitos, con validación y errores del servidor.
+- Proveer controles visibles para aumentar/reducir horas, días y porcentajes de hitos sin exceder límites y admitir entrada por teclado.
 - Pedir confirmación antes de desactivar una Meta y antes de eliminar una Partida.
 - Permitir editar una Partida existente y refrescar los datos tras crear, editar o eliminar.
 - Mantener `metasApi.ts` separado de los componentes y los tipos explícitos en `types/index.ts`.
@@ -78,6 +80,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 | CA-05.3 | Pruebas de carga, error y reintento; se comprueba que el error no representa valores faltantes como ceros o éxito. |
 | CA-06.1 | Prueba del formulario: crear con datos válidos y editar la Meta activa llaman al método correcto de `metasApi` y refrescan el detalle. |
 | CA-06.2 | Prueba que cancelar la confirmación no llama al servicio y confirmar desactiva la Meta, actualizando el estado del detalle. |
+| CA-06.3 | Prueba de los controles numéricos visibles: incrementan y decrementan horas, días y porcentaje de hito sin exceder sus límites. |
 | CA-07.1 | Prueba del formulario de edición que carga `GET /api/partidas/:id`, envía `PUT` y actualiza la partida existente sin usar el método de creación. |
 | CA-07.2 | Pruebas de validación de campos y presentación del error de servidor sin borrar los valores introducidos. |
 | CA-07.3 | Prueba de partida inexistente: se muestra el error y no se presenta un formulario de edición vacío como una partida válida. |
@@ -90,7 +93,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 
 | Ticket | Archivos previstos |
 |---|---|
-| T-08 | `frontend/package.json` (script `test` y dependencias Vitest, jsdom, `@testing-library/react`, `@testing-library/user-event` y `@testing-library/jest-dom`); `frontend/vitest.config.ts`; `frontend/src/types/index.ts`; `frontend/src/services/metasApi.ts`; `frontend/src/pages/DetalleVideojuego.tsx`; `frontend/src/pages/FormularioMeta.tsx`; `frontend/src/pages/FormularioMeta.test.tsx`; estilos del formulario en `frontend/src/styles.css`. |
+| T-08 | `frontend/package.json` (script `test` y dependencias Vitest, jsdom, `@testing-library/react`, `@testing-library/user-event` y `@testing-library/jest-dom`); `frontend/vitest.config.ts`; `frontend/src/types/index.ts`; `frontend/src/services/metasApi.ts`; `frontend/src/pages/DetalleVideojuego.tsx`; `frontend/src/pages/FormularioMeta.tsx`; `frontend/src/pages/FormularioMeta.test.tsx`; estilos del formulario en `frontend/src/styles.css` y `frontend/src/progreso.css`. |
 | T-09 | `frontend/src/types/index.ts`; `frontend/src/services/videojuegosApi.ts`; `frontend/src/services/metasApi.ts`; `frontend/src/pages/DetalleVideojuego.tsx`; `frontend/src/pages/ProgresoSemanal.tsx`; `frontend/src/pages/ProgresoSemanal.test.tsx`; clases de progreso en `frontend/src/styles.css`; `frontend/vitest.config.ts`. |
 | T-10 | `frontend/package.json`; `frontend/vitest.config.ts`; `frontend/src/App.tsx`; `frontend/src/pages/index.ts`; `frontend/src/types/index.ts`; `frontend/src/services/partidasApi.ts`; `frontend/src/pages/FormularioPartida.tsx`; `frontend/src/pages/DetalleVideojuego.tsx`; `frontend/src/pages/ListaPartidas.tsx`; `frontend/src/pages/FormularioPartida.test.tsx`; `frontend/src/pages/DetalleVideojuego.test.tsx`; `frontend/src/pages/ListaPartidas.test.tsx`; `frontend/src/styles.css`. |
 

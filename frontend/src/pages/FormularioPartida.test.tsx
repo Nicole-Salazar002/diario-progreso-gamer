@@ -102,4 +102,23 @@ describe('FormularioPartida', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('La duración no es válida');
     expect(duracion).toHaveValue(45);
   });
+
+  it('ofrece controles visibles para duración y avance de sesión', async () => {
+    const user = userEvent.setup();
+    renderFormulario('/partidas/nueva');
+
+    const duracion = await screen.findByLabelText(/Duración/);
+    await user.click(screen.getByRole('button', { name: 'Aumentar duración en minutos' }));
+    expect(duracion).toHaveValue(31);
+    await user.click(screen.getByRole('button', { name: 'Reducir duración en minutos' }));
+    expect(duracion).toHaveValue(30);
+
+    const avance = screen.getByLabelText(/Avance registrado/);
+    expect(avance.closest('.number-suffix')).toContainElement(screen.getByText('%'));
+    expect(screen.getByRole('button', { name: 'Reducir avance registrado' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Aumentar avance registrado' }));
+    expect(avance).toHaveValue(1);
+    await user.click(screen.getByRole('button', { name: 'Reducir avance registrado' }));
+    expect(avance).toHaveValue(0);
+  });
 });

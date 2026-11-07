@@ -33,6 +33,7 @@ describe('ProgresoSemanal', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('Mejor racha: 5 días')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Racha actual de 2 días' })).toBeInTheDocument();
     expect(screen.getByText('Superar la primera zona · 25%')).toBeInTheDocument();
     expect(screen.getByText('Alcanzado')).toBeInTheDocument();
     expect(screen.getByText('Pendiente')).toBeInTheDocument();

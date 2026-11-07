@@ -1,12 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { partidasApi } from '../services/partidasApi';
 import { IPartida } from '../types';
 export const ListaPartidas: React.FC = () => {
   const navigate = useNavigate();
   const [partidas,setPartidas]=useState<IPartida[]>([]); const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null);
-  const cargar=async()=>{try{setLoading(true);setError(null);setPartidas(await partidasApi.obtenerTodas());}catch(err:any){setError(err.message||'Error al obtener las partidas');}finally{setLoading(false);}};
-  useEffect(()=>{cargar();},[]);
+  const cargar = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setPartidas(await partidasApi.obtenerTodas());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al obtener las partidas');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { void cargar(); }, [cargar]);
   const eliminar = async (partida: IPartida) => {
     if (!window.confirm('¿Eliminar esta sesión? Esta acción no se puede deshacer.')) return;
     try {

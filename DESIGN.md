@@ -63,6 +63,10 @@ Se conservan los degradados lavanda/índigo y azul/violeta del producto. Los nue
 
 ## No hacemos
 
+### Fondo exterior
+
+El fondo exterior puede usar capas CSS de luz lavanda, magenta y violeta sobre tonos índigo profundos para crear una atmósfera difusa. Las superficies interiores permanecen oscuras y legibles; no se requieren imágenes externas para este efecto.
+
 - No añadimos rankings, metas compartidas, notificaciones, recordatorios ni gráficos históricos.
 - No usamos color como única señal de cumplimiento, error o estado.
 - No incorporamos librerías de interfaz sin que estén autorizadas explícitamente en una spec y en este documento.

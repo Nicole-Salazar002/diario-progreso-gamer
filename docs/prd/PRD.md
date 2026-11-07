@@ -16,6 +16,7 @@ Permitir que la persona fije una meta semanal para un videojuego y, en el detall
 - En cuántos días distintos jugó frente a los días que se propuso.
 - Cuál es su racha actual y cuál ha sido su mejor racha.
 - Qué hitos de avance corresponden a su progreso actual.
+- Cómo va el progreso semanal de cada videojuego desde una vista general accesible en la navegación.
 
 ## Métrica de éxito
 
@@ -32,6 +33,8 @@ La definición exacta de las cuatro semanas evaluadas cuando un mes contiene sem
 - Crear, consultar, actualizar y desactivar metas.
 - Conservar el acceso al resumen y al historial de partidas existentes del Proyecto 3.
 - Si se registra, edita o elimina una partida, reflejar los datos actualizados en el progreso mostrado.
+- Ofrecer una vista general del progreso semanal por videojuego, con acceso al detalle de cada juego.
+- Facilitar la edición de valores numéricos mediante controles visibles, accesibles y limitados por las reglas de cada campo.
 
 ## Fuera de alcance
 
