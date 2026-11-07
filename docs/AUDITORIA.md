@@ -62,6 +62,8 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | CA-07.2 | Prueba del formulario conserva valores y muestra error del servidor; servicio prueba errores de lectura/actualización. | Verificado (automatizado). |
 | CA-07.3 | Prueba del formulario muestra error de partida inexistente y no presenta un formulario vacío válido. | Verificado (automatizado). |
 | CA-07.4 | Tests de detalle y lista cubren recargas después de escribir/eliminar y navegación al detalle afectado. | Verificado (automatizado con respuestas simuladas). |
+| CA-08.4 | `ListaVideojuegos.test.tsx` verifica cancelar sin petición, confirmar con el ID correcto, retirar la tarjeta y no navegar al detalle. | Verificado (automatizado con servicio simulado); validar además con juego temporal en Atlas. |
+| CA-08.5 | `ListaVideojuegos.test.tsx` verifica que, ante error del servidor, la tarjeta permanece y se muestra una alerta. | Verificado (automatizado). |
 | CA-09.1 | `frontend/src/App.test.tsx` verifica que el enlace «Mi progreso» abre `/progreso`. | Verificado (automatizado). |
 | CA-09.2 | `frontend/src/pages/ProgresoUsuario.test.tsx` verifica valores por videojuego a partir de respuestas simuladas del servicio. | Verificado (automatizado). |
 | CA-09.3 | La prueba de `ProgresoUsuario` verifica que cada tarjeta enlaza al detalle del videojuego correcto. | Verificado (automatizado). |
@@ -77,7 +79,7 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | Revisión visual E2 | La captura compartida muestra el detalle en escritorio y las nuevas estadísticas. No hay evidencia guardada de móvil, formulario, teclado, foco o movimiento reducido. | Parcial: completar revisión visual/manual. |
 | Build frontend | `npm run build` completó TypeScript y Vite correctamente en la validación final. | Verificado (automatizado). |
 | Lint frontend | `npm run lint` terminó sin errores ni advertencias. | Verificado (automatizado). |
-| Pruebas frontend | `npm test` pasó con 10 archivos y 37 pruebas, incluidas las pruebas nuevas de navegación y progreso global. | Verificado (automatizado). |
+| Pruebas frontend | `npm test` pasó con 11 archivos y 41 pruebas, incluidas navegación, progreso global y eliminación de videojuegos. | Verificado (automatizado). |
 | Fondo atmosférico | `frontend/src/fondo.css` aplica degradados CSS al fondo exterior; no añade recursos remotos ni capas interactivas. Build pasado. | Parcial: falta revisión visual manual en escritorio y móvil. |
 
 ## Otras verificaciones de entrega
@@ -89,7 +91,7 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | Secretos fuera de Git | `.env` está ignorado y no forma parte del índice Git; existen `.env.example` para ambos paquetes. | Verificado localmente. |
 | Disponibilidad pública | El frontend respondió HTTP 200; el endpoint de progreso respondió HTTP 400 para un ID mal formado. | Verificado: disponibilidad y validación básica, no lectura válida desde Atlas. |
 | API con ID válido y datos reales | No se hizo una consulta a datos personales ni se registró una matriz de integración con Atlas/Render. | Pendiente: ejecutar con un videojuego temporal. |
-| Pruebas manuales 400/404/409 | 400 se observó en la API pública con ID mal formado; 404 y 409 requieren comprobación manual con ID inexistente/de prueba y una meta duplicada. | Parcial. |
+| Pruebas manuales 400/404/409 | Thunder Client confirmó 400 `ID_INVALIDO` con `abc`, 404 `NO_ENCONTRADO` con un ID de formato válido inexistente y 409 `CONFLICTO` al intentar crear una segunda meta activa para el mismo videojuego. | Verificado manualmente en la API local. |
 | Demo de hasta 6 minutos | Existe [un guion reproducible](./guion-demo.md); no se ha grabado ni adjuntado el video. | Pendiente: grabar. |
 
 ## Matriz manual por completar
@@ -100,10 +102,11 @@ Ejecutar con un videojuego temporal y datos de prueba. Para una consulta real su
 |---|---|---|---|
 | Progreso con cinco partidas | Crear cinco sesiones de prueba en fechas distintas, incluida una racha rota; consultar `GET /api/videojuegos/<ID_VALIDO_DE_PRUEBA>/progreso-semanal`. | Horas/días, racha actual y mejor racha coinciden con la regla; semana en `America/Guayaquil`. | Pendiente de completar en Atlas/Render. |
 | Sin partidas | Consultar progreso para un juego de prueba sin sesiones. | Horas, días y rachas en cero; hitos pendientes si hay meta activa. | Cubierto por pruebas de servicio/dominio; captura HTTP manual pendiente. |
-| 400 | Solicitar progreso con un ID de formato inválido. | HTTP 400, `ID_INVALIDO`. | Observado en endpoint público; respuesta del servidor reportó HTTP 400. |
-| 404 | Solicitar progreso con ID ObjectId válido que no exista. | HTTP 404, `NO_ENCONTRADO`. | Pendiente de registrar respuesta JSON. |
-| 409 | Conservar una meta activa y enviar otra creación para el mismo juego temporal. | HTTP 409, `CONFLICTO`; la meta original sigue activa. | Cubierto por pruebas de servicio/middleware; prueba HTTP manual pendiente. |
+| 400 | Solicitar progreso con un ID de formato inválido. | HTTP 400, `ID_INVALIDO`. | Se observa en ThunderClient con GET, al detectar que es un ID Inválido presenta el texto: "El ID provisto "abc" no tiene un formato válido." |
+| 404 | Solicitar progreso con ID ObjectId válido que no exista. | HTTP 404, `NO_ENCONTRADO`. | "Se prueba en ThunderClient con GET, es un ID que concuerda con el formato de MONGODB pero no existe, y responde con el mensaje de "Videojuego no encontrado". |
+| 409 | Conservar una meta activa y enviar otra creación para el mismo juego temporal. | HTTP 409, `CONFLICTO`; la meta original sigue activa. | Se realiza una prueba en ThunderClient con POST con el ID de la meta de un videojuego existente en MONGODB, no se duplica la meta y aparece el mensaje de "Ya existe una Meta activa para este videojuego". |
 | Flujo de edición y refresco | Crear, editar y cancelar/confirmar eliminación desde el navegador. | Formulario carga valores; el detalle actualiza partidas, resumen y progreso sin datos obsoletos. | Pruebas simuladas pasaron; repetir en navegador y adjuntar captura pendiente. |
+| Eliminar videojuego desde la aplicación | En la biblioteca, eliminar un videojuego temporal y aceptar la confirmación. Para completar la integración, verificar en Atlas que tampoco quedan sus partidas ni metas. | Si se cancela no hay borrado; si se confirma desaparece de la biblioteca y se eliminan sus documentos dependientes. | La eliminación desde la aplicación se probó manualmente y funcionó. Falta confirmar en Atlas que desaparecieron también las partidas y metas asociadas. |
 | Vista «Mi progreso» | Abrir `/progreso` en la aplicación desplegada y seguir el enlace de una tarjeta. | La vista carga y muestra datos reales por juego; el enlace abre el detalle correspondiente. | Pruebas simuladas pasaron; comprobación manual contra Render pendiente. |
 | Móvil y accesibilidad | Revisar anchos móvil/escritorio y recorrer formularios con teclado. | Sin desbordamiento horizontal; etiquetas, foco y estados accesibles. | Pendiente. |
 | Demo | Grabar el guion dentro de seis minutos. | Video visible para la evaluación, sin secretos ni datos reales. | Pendiente; guardar evidencia fuera de archivos de configuración. |
