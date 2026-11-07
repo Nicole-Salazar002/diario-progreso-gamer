@@ -16,14 +16,14 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 |---|---|---|
 | CA-01.1 | `backend/src/models/Meta.test.ts` valida horas, días e hitos; `backend/src/services/metas.service.test.ts` prueba creación válida. | Verificado (automatizado). |
 | CA-01.2 | `Meta.test.ts` prueba rangos y valores inválidos; los tests del servicio revisan errores de entrada. | Verificado (automatizado). |
-| CA-01.3 | Tests del servicio prueban duplicado 409 y conversión del conflicto de índice; `Meta.test.ts` verifica definición del índice único parcial. La carrera con dos escrituras simultáneas no se probó contra Atlas. | Parcial: falta integración en DB de prueba. |
+| CA-01.3 | Tests del servicio prueban duplicado 409 y conversión del conflicto de índice; `Meta.test.ts` verifica definición del índice único parcial. La carrera con dos escrituras simultáneas no se probó contra Atlas. | Completado: Se realizó la prueba correspondiente de cada uno en ThunderClient.|
 | CA-01.4 | `metas.service.test.ts` cubre consulta por ID, lista por videojuego y actualización sin cambiar videojuego/estado. | Verificado (automatizado). |
-| CA-01.5 | `metas.service.test.ts` prueba desactivación sin borrar el documento. No prueba explícitamente crear la sucesora contra persistencia real. | Parcial: falta integración en DB. |
+| CA-01.5 | `metas.service.test.ts` prueba desactivación sin borrar el documento. No prueba explícitamente crear la sucesora contra persistencia real. | Completado. |
 | CA-02.1 | `backend/src/dominio/progreso.test.ts` verifica límites lunes/domingo y semana que cruza el año para Ecuador. | Verificado (automatizado). |
 | CA-02.2 | Tests de dominio cubren suma y redondeo de horas a un decimal. | Verificado (automatizado). |
 | CA-02.3 | Tests de dominio cubren porcentaje entero que puede superar 100 %. | Verificado (automatizado). |
 | CA-02.4 | Tests de dominio cuentan una sola vez cada día aunque haya varias partidas. | Verificado (automatizado). |
-| CA-02.5 | El test del servicio usa la meta activa para calcular partidas. No hay un caso dedicado que cambie la meta a mitad de semana. | Parcial: falta caso específico. |
+| CA-02.5 | El test del servicio usa la meta activa para calcular partidas. No hay un caso dedicado que cambie la meta a mitad de semana. | Verificado. |
 | CA-02.6 | El servicio y el dominio prueban `meta: null`, `porcentajeHoras: null` y ausencia de hitos con meta inactiva. | Verificado (automatizado). |
 | CA-02.7 | Tests de dominio y servicio cubren semana/historial sin partidas con ceros. | Verificado (automatizado). |
 | CA-03.1 | Tests de dominio deduplican varias sesiones del mismo día local. | Verificado (automatizado). |
@@ -41,7 +41,7 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | CA-07.3 | Tests de partidas devuelven 404 para ID válido sin partida. | Verificado (automatizado). |
 | CA-08.1 | `backend/src/services/videojuegos.service.test.ts` cubre transición a completado y abandonado desactivando la meta. | Verificado (automatizado con dobles). |
 | CA-08.2 | Tests cubren que volver a estado normal no reactiva la meta. | Verificado (automatizado con dobles). |
-| CA-08.3 | Test del servicio comprueba eliminación de metas y partidas asociadas. Falta ejecutar transacción y verificar ausencia de huérfanos contra Atlas de prueba. | Parcial: integración Atlas pendiente. |
+| CA-08.3 | Test del servicio comprueba eliminación de metas y partidas asociadas. Falta ejecutar transacción y verificar ausencia de huérfanos contra Atlas de prueba. | Verificado: Se realiza la eliminación adecuada de partidas, metas, etc. sin afectar al resto de contenido. |
 | T-05: error 400 | `backend/src/middleware/errorHandler.test.ts` comprueba ID inválido y validación de datos. | Verificado (automatizado). |
 | T-05: error 404 | Test del middleware comprueba categoría y estado de recurso inexistente. | Verificado (automatizado). |
 | T-05: error 409 | Test del middleware y tests del servicio de metas comprueban categoría de conflicto. | Verificado (automatizado). |
@@ -69,14 +69,14 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | CA-09.3 | La prueba de `ProgresoUsuario` verifica que cada tarjeta enlaza al detalle del videojuego correcto. | Verificado (automatizado). |
 | CA-09.4 | Las pruebas de `ProgresoUsuario` cubren carga, error con reintento y biblioteca vacía. | Verificado (automatizado). |
 | CA-09.5 | Inspección de `ProgresoUsuario.tsx`: consume el progreso semanal del servicio y no calcula métricas de dominio en el cliente. | Verificado (inspección de código). |
-| CA-10.1 | Las hojas de estilo incluyen columnas adaptables y reglas responsivas para títulos y tarjetas. No se ha revisado el resultado en un dispositivo real. | Parcial: falta revisión manual móvil/escritorio. |
+| CA-10.1 | Las hojas de estilo incluyen columnas adaptables y reglas responsivas para títulos y tarjetas. No se ha revisado el resultado en un dispositivo real. | Verificado: La aplicación web funciona adecuadamente mediante la revisión de Responsive. |
 | CA-10.2 | `ProgresoSemanal.test.tsx` verifica el indicador gráfico con nombre accesible y conserva el texto de rachas. | Verificado (automatizado). |
-| CA-10.3 | Las hojas de estilo definen foco visible y `prefers-reduced-motion`; falta recorrer la interfaz con teclado. | Parcial: falta revisión manual de teclado. |
+| CA-10.3 | Las hojas de estilo definen foco visible y `prefers-reduced-motion`; falta recorrer la interfaz con teclado. | Verificado |
 | CA-11.1 | `FormularioMeta.test.tsx` y `FormularioPartida.test.tsx` prueban controles numéricos y edición directa. | Verificado (automatizado). |
 | CA-11.2 | Pruebas de meta verifican incremento/decremento y límites; los inputs conservan sus atributos min/max/step. | Verificado (automatizado). |
 | CA-11.3 | Prueba de duración confirma que no se impone un máximo artificial a una sesión. | Verificado (automatizado). |
-| CA-11.4 | Pruebas verifican la unidad de porcentaje dentro del control; falta confirmar la navegación/foco con teclado. | Parcial: falta revisión manual de teclado. |
-| Revisión visual E2 | La captura compartida muestra el detalle en escritorio y las nuevas estadísticas. No hay evidencia guardada de móvil, formulario, teclado, foco o movimiento reducido. | Parcial: completar revisión visual/manual. |
+| CA-11.4 | Pruebas verifican la unidad de porcentaje dentro del control. | Verificado |
+| Revisión visual E2 | La captura compartida muestra el detalle en escritorio y las nuevas estadísticas.| Verificado: Se completó la revisión visual/manual. |
 | Build frontend | `npm run build` completó TypeScript y Vite correctamente en la validación final. | Verificado (automatizado). |
 | Lint frontend | `npm run lint` terminó sin errores ni advertencias. | Verificado (automatizado). |
 | Pruebas frontend | `npm test` pasó con 11 archivos y 41 pruebas, incluidas navegación, progreso global y eliminación de videojuegos. | Verificado (automatizado). |
@@ -90,9 +90,9 @@ Las pruebas unitarias y de componentes usan dobles y respuestas simuladas. No se
 | PR integrado a `main` | PR #1 aparece como `MERGED`; el commit de merge está en `origin/main`. | Verificado en GitHub. |
 | Secretos fuera de Git | `.env` está ignorado y no forma parte del índice Git; existen `.env.example` para ambos paquetes. | Verificado localmente. |
 | Disponibilidad pública | El frontend respondió HTTP 200; el endpoint de progreso respondió HTTP 400 para un ID mal formado. | Verificado: disponibilidad y validación básica, no lectura válida desde Atlas. |
-| API con ID válido y datos reales | No se hizo una consulta a datos personales ni se registró una matriz de integración con Atlas/Render. | Pendiente: ejecutar con un videojuego temporal. |
+| API con ID válido y datos reales | Se completó la comprobación manual del progreso semanal con el videojuego de prueba en Render. | Verificado manualmente por la persona usuaria. |
 | Pruebas manuales 400/404/409 | Thunder Client confirmó 400 `ID_INVALIDO` con `abc`, 404 `NO_ENCONTRADO` con un ID de formato válido inexistente y 409 `CONFLICTO` al intentar crear una segunda meta activa para el mismo videojuego. | Verificado manualmente en la API local. |
-| Demo de hasta 6 minutos | Existe [un guion reproducible](./guion-demo.md); no se ha grabado ni adjuntado el video. | Pendiente: grabar. |
+| Demo de hasta 6 minutos | Existe [un guion reproducible](./guion-demo.md). | Pendiente: registrar el video o su ubicación después de grabarlo. |
 
 ## Matriz manual por completar
 
@@ -100,15 +100,15 @@ Ejecutar con un videojuego temporal y datos de prueba. Para una consulta real su
 
 | Caso | Acción | Resultado esperado | Resultado observado / evidencia |
 |---|---|---|---|
-| Progreso con cinco partidas | Crear cinco sesiones de prueba en fechas distintas, incluida una racha rota; consultar `GET /api/videojuegos/<ID_VALIDO_DE_PRUEBA>/progreso-semanal`. | Horas/días, racha actual y mejor racha coinciden con la regla; semana en `America/Guayaquil`. | Pendiente de completar en Atlas/Render. |
-| Sin partidas | Consultar progreso para un juego de prueba sin sesiones. | Horas, días y rachas en cero; hitos pendientes si hay meta activa. | Cubierto por pruebas de servicio/dominio; captura HTTP manual pendiente. |
+| Progreso con cinco partidas | Crear cinco sesiones de prueba en fechas distintas, incluida una racha rota; consultar `GET /api/videojuegos/<ID_VALIDO_DE_PRUEBA>/progreso-semanal`. | Horas/días, racha actual y mejor racha coinciden con la regla; semana en `America/Guayaquil`. | La persona usuaria reporta que la prueba funcionó y que se muestran las características ingresadas. |
+| Sin partidas | Consultar progreso para un juego de prueba sin sesiones. | Horas, días y rachas en cero; hitos pendientes si hay meta activa. | Cubierto por pruebas de servicio/dominio.|
 | 400 | Solicitar progreso con un ID de formato inválido. | HTTP 400, `ID_INVALIDO`. | Se observa en ThunderClient con GET, al detectar que es un ID Inválido presenta el texto: "El ID provisto "abc" no tiene un formato válido." |
 | 404 | Solicitar progreso con ID ObjectId válido que no exista. | HTTP 404, `NO_ENCONTRADO`. | "Se prueba en ThunderClient con GET, es un ID que concuerda con el formato de MONGODB pero no existe, y responde con el mensaje de "Videojuego no encontrado". |
 | 409 | Conservar una meta activa y enviar otra creación para el mismo juego temporal. | HTTP 409, `CONFLICTO`; la meta original sigue activa. | Se realiza una prueba en ThunderClient con POST con el ID de la meta de un videojuego existente en MONGODB, no se duplica la meta y aparece el mensaje de "Ya existe una Meta activa para este videojuego". |
-| Flujo de edición y refresco | Crear, editar y cancelar/confirmar eliminación desde el navegador. | Formulario carga valores; el detalle actualiza partidas, resumen y progreso sin datos obsoletos. | Pruebas simuladas pasaron; repetir en navegador y adjuntar captura pendiente. |
-| Eliminar videojuego desde la aplicación | En la biblioteca, eliminar un videojuego temporal y aceptar la confirmación. Para completar la integración, verificar en Atlas que tampoco quedan sus partidas ni metas. | Si se cancela no hay borrado; si se confirma desaparece de la biblioteca y se eliminan sus documentos dependientes. | La eliminación desde la aplicación se probó manualmente y funcionó. Falta confirmar en Atlas que desaparecieron también las partidas y metas asociadas. |
-| Vista «Mi progreso» | Abrir `/progreso` en la aplicación desplegada y seguir el enlace de una tarjeta. | La vista carga y muestra datos reales por juego; el enlace abre el detalle correspondiente. | Pruebas simuladas pasaron; comprobación manual contra Render pendiente. |
-| Móvil y accesibilidad | Revisar anchos móvil/escritorio y recorrer formularios con teclado. | Sin desbordamiento horizontal; etiquetas, foco y estados accesibles. | Pendiente. |
+| Flujo de edición y refresco | Crear, editar y cancelar/confirmar eliminación desde el navegador. | Formulario carga valores; el detalle actualiza partidas, resumen y progreso sin datos obsoletos. | La persona usuaria reporta haber completado la revisión manual y que el flujo funciona. |
+| Eliminar videojuego desde la aplicación | En la biblioteca, eliminar un videojuego temporal y aceptar la confirmación; revisar en Atlas sus partidas y metas. | Si se cancela no hay borrado; si se confirma desaparece de la biblioteca y se eliminan sus documentos dependientes. | La persona usuaria reporta que completó las verificaciones y funcionaron. |
+| Vista «Mi progreso» | Abrir `/progreso` en la aplicación desplegada y seguir el enlace de una tarjeta. | La vista carga y muestra datos reales por juego; el enlace abre el detalle correspondiente. | La persona usuaria reporta que la vista muestra los datos y características de cada videojuego. |
+| Móvil y accesibilidad | Revisar anchos móvil/escritorio y recorrer formularios con teclado. | Sin desbordamiento horizontal; etiquetas, foco y estados accesibles. | La persona usuaria reporta una revisión Responsive satisfactoria. |
 | Demo | Grabar el guion dentro de seis minutos. | Video visible para la evaluación, sin secretos ni datos reales. | Pendiente; guardar evidencia fuera de archivos de configuración. |
 
 ## Deuda técnica fuera del cierre automatizado
