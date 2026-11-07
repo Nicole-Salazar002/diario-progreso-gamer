@@ -78,6 +78,8 @@ Este backlog descompone [el PRD aprobado](../prd/PRD.md) en historias, criterios
 - **CA-08.1 — Desactivar al completar o abandonar.** DADO un videojuego con meta activa, CUANDO su estado cambia a completado o abandonado, ENTONCES la meta queda desactivada.
 - **CA-08.2 — No reactivar automáticamente.** DADO un videojuego cuya meta se desactivó al completarlo o abandonarlo, CUANDO vuelve a otro estado, ENTONCES la meta permanece inactiva hasta que la persona cree una nueva.
 - **CA-08.3 — Eliminar registros dependientes.** DADO un videojuego con partidas y metas, CUANDO se elimina el videojuego, ENTONCES también se eliminan sus partidas y todas sus metas e hitos asociados.
+- **CA-08.4 — Eliminar desde la biblioteca.** DADO un videojuego en la biblioteca, CUANDO elijo eliminarlo y confirmo la advertencia, ENTONCES se elimina junto con sus partidas y metas asociadas y la biblioteca se actualiza; si cancelo, no se borra.
+- **CA-08.5 — Comunicar fallos de eliminación.** DADO un error del servidor al eliminar, CUANDO la solicitud falla, ENTONCES la tarjeta se conserva y se muestra un mensaje de error.
 
 ### HU-09 · Consultar el progreso semanal de todos los videojuegos
 
@@ -125,6 +127,7 @@ Los tickets de pruebas del dominio preceden a la implementación correspondiente
 | T-11 | Frontend | Agregar una vista de progreso semanal por videojuego en `/progreso`, con enlaces a los detalles y estados de carga, error y biblioteca vacía. | Los criterios HU-09 tienen pruebas con servicios simulados; cada tarjeta usa datos del servidor; build y lint frontend pasan. | T-09 | Hecho en `ProgresoUsuario.tsx`; prueba de componente con valores, reintento y biblioteca vacía; build y lint pasan. |
 | T-12 | Frontend | Mejorar la jerarquía visual y accesibilidad del detalle y del progreso semanal siguiendo `DESIGN.md`. | Los criterios HU-10 tienen prueba de accesibilidad del indicador; estilos responden a anchuras, foco visible y `prefers-reduced-motion`; build/lint pasan y revisión móvil/teclado queda registrada. | T-09 | Hecho en estilos y prueba del indicador; build/lint pasan. Falta revisión manual en móvil y teclado. |
 | T-13 | Frontend | Incorporar controles numéricos accesibles y reutilizables para metas y partidas, con límites por campo y unidades integradas. | Los criterios HU-11 tienen pruebas de meta, duración y avance; límites deshabilitan el control correcto; unidades y foco son legibles; build/lint frontend pasan. | T-07, T-08 | Hecho en `ControlNumero.tsx` y formularios; pruebas de interacción y build/lint pasan. Pendiente completar revisión manual con teclado. |
+| T-14 | Frontend | Añadir a cada tarjeta de videojuego una acción accesible de eliminación con confirmación de borrado en cascada, actualización de biblioteca y manejo visible de errores. | CA-08.4 y CA-08.5 tienen pruebas de cancelar, confirmar, navegación, refresco y fallo; lint y build frontend pasan. | T-06 | Hecho en interfaz: 3 pruebas nuevas; frontend con 41 pruebas, lint y build pasan. Falta validación manual en Atlas con un juego de prueba. |
 
 ## Deuda técnica diferida
 
