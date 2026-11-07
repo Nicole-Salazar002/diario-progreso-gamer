@@ -1,0 +1,12 @@
+.game-card-item {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-card-delete {
+  align-self: flex-end;
+  padding: 7px 10px;
+  font-size: 11px;
+}
