@@ -141,6 +141,7 @@ describe('gestión de meta en el detalle', () => {
       .mockResolvedValueOnce({ ...progreso, meta: null, porcentajeHoras: null, hitos: [] });
     renderDetalle();
 
+    await user.click(await screen.findByRole('button', { name: 'Ver meta semanal' }));
     await screen.findByText('5 horas');
     await user.click(screen.getByRole('button', { name: 'Desactivar' }));
     expect(confirmar).toHaveBeenCalledOnce();
@@ -198,6 +199,27 @@ describe('gestión de meta en el detalle', () => {
     expect(screen.getByText('Define una meta semanal para comparar tus horas y días de juego.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Crear meta' })).toBeInTheDocument();
     expect(screen.queryByText(/% de tu objetivo/)).not.toBeInTheDocument();
+  });
+
+  it('abre la meta en un diálogo modal y permite cerrarlo con Escape', async () => {
+    const user = userEvent.setup();
+    vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([]);
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue({
+      ...progreso,
+      meta: null,
+      porcentajeHoras: null,
+      hitos: []
+    });
+    renderDetalle();
+
+    const abrir = await screen.findByRole('button', { name: 'Crear meta' });
+    await user.click(abrir);
+    expect(screen.getByRole('dialog', { name: 'Meta semanal' })).toBeInTheDocument();
+    expect(document.querySelector('.goal-panel')).not.toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: 'Meta semanal' })).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(abrir);
   });
 
   it('mantiene el estado de carga hasta recibir el progreso del servidor', async () => {

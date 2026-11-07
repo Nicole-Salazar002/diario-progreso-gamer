@@ -20,7 +20,8 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 
 ### Formulario y ciclo de vida de Meta
 
-- El formulario se muestra desde la sección de progreso del detalle; no requiere una ruta de página independiente.
+- La meta se consulta y se administra desde un cuadro modal en el detalle; crear y editar no expande un panel al final de la página y no requiere una ruta independiente.
+- El cuadro modal tiene nombre accesible, cierre explícito, cierre con Escape, foco inicial y retención del foco mientras permanece abierto; al cerrarse devuelve el foco a su activador.
 - Permite ingresar horas semanales, días por semana y hasta cinco hitos, cada uno con descripción y porcentaje objetivo.
 - Los campos numéricos de horas, días y porcentaje de hito ofrecen controles visibles para incrementar y reducir, respetando sus límites y permitiendo también la entrada directa por teclado.
 - Valida en cliente los mismos límites visibles del contrato backend; la respuesta de error del servidor se muestra de forma legible y no se descarta.
@@ -81,6 +82,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 | CA-06.1 | Prueba del formulario: crear con datos válidos y editar la Meta activa llaman al método correcto de `metasApi` y refrescan el detalle. |
 | CA-06.2 | Prueba que cancelar la confirmación no llama al servicio y confirmar desactiva la Meta, actualizando el estado del detalle. |
 | CA-06.3 | Prueba de los controles numéricos visibles: incrementan y decrementan horas, días y porcentaje de hito sin exceder sus límites. |
+| CA-06.4 | Prueba del detalle: crear/editar meta abre un diálogo modal, cerrar/Escape lo cierra y la meta no se despliega al final de la página. |
 | CA-07.1 | Prueba del formulario de edición que carga `GET /api/partidas/:id`, envía `PUT` y actualiza la partida existente sin usar el método de creación. |
 | CA-07.2 | Pruebas de validación de campos y presentación del error de servidor sin borrar los valores introducidos. |
 | CA-07.3 | Prueba de partida inexistente: se muestra el error y no se presenta un formulario de edición vacío como una partida válida. |

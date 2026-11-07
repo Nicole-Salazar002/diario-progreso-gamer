@@ -15,6 +15,7 @@ export const DetalleVideojuego: React.FC = () => {
   const [progresoSemanal, setProgresoSemanal] = useState<IProgresoSemanal | null>(null);
   const [metas, setMetas] = useState<IMeta[]>([]);
   const [formularioMetaAbierto, setFormularioMetaAbierto] = useState(false);
+  const [metaModalAbierto, setMetaModalAbierto] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const cargarDatos = useCallback(async () => {
@@ -24,11 +25,52 @@ export const DetalleVideojuego: React.FC = () => {
     finally { setLoading(false); }
   }, [id]);
   useEffect(() => { void cargarDatos(); }, [cargarDatos]);
+  useEffect(() => {
+    if (!metaModalAbierto) return;
+    const focoAnterior = document.activeElement as HTMLElement | null;
+    const dialogo = document.querySelector<HTMLElement>('.goal-modal');
+    const enfocarPrimero = () => {
+    const inicial = formularioMetaAbierto
+      ? dialogo?.querySelector<HTMLElement>('input')
+      : dialogo?.querySelector<HTMLElement>('button');
+    (inicial ?? dialogo)?.focus();
+    };
+    const atraparFoco = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMetaModalAbierto(false);
+        setFormularioMetaAbierto(false);
+        return;
+      }
+      if (event.key !== 'Tab' || !dialogo) return;
+      const elementos = Array.from(dialogo.querySelectorAll<HTMLElement>(
+        'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+      )).filter(elemento => elemento.offsetParent !== null);
+      if (!elementos.length) return;
+      const primero = elementos[0];
+      const ultimo = elementos[elementos.length - 1];
+      if (event.shiftKey && document.activeElement === primero) {
+        event.preventDefault();
+        ultimo.focus();
+      } else if (!event.shiftKey && document.activeElement === ultimo) {
+        event.preventDefault();
+        primero.focus();
+      }
+    };
+    enfocarPrimero();
+    document.addEventListener('keydown', atraparFoco);
+    return () => {
+      document.removeEventListener('keydown', atraparFoco);
+      focoAnterior?.focus();
+    };
+  }, [metaModalAbierto, formularioMetaAbierto]);
   const toggleLogro = async (logroId: string, actual: boolean) => { if (!id) return; try { setJuego(await videojuegosApi.actualizarLogro(id, logroId, !actual)); } catch (err) { setError(err instanceof Error ? err.message : 'No se pudo actualizar el logro.'); } };
   const desactivarMeta = async (meta: IMeta) => {
     if (!window.confirm('¿Desactivar esta meta? Se conservará en el historial y podrás crear otra más adelante.')) return;
     try {
       await metasApi.desactivar(meta._id);
+      setMetaModalAbierto(false);
+      setFormularioMetaAbierto(false);
       await cargarDatos();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo desactivar la meta.');
@@ -60,40 +102,55 @@ export const DetalleVideojuego: React.FC = () => {
     <ProgresoSemanal
       progreso={progresoSemanal}
       puedeCrearMeta={puedeCrearMeta}
-      onCrearMeta={() => setFormularioMetaAbierto(true)}
+      onCrearMeta={() => { setFormularioMetaAbierto(true); setMetaModalAbierto(true); }}
     />
+    {metaActiva && <section className="goal-launcher" aria-label="Meta semanal">
+      <span><strong>Meta semanal activa</strong><small>{metaActiva.horasSemanales} h · {metaActiva.diasPorSemana} días</small></span>
+      <button className="button button-secondary" type="button" onClick={() => { setFormularioMetaAbierto(false); setMetaModalAbierto(true); }}>Ver meta semanal</button>
+    </section>}
     <div className="detail-columns"><section className="panel detail-panel"><div className="panel-heading"><div><span className="eyebrow">OBJETIVOS</span><h3>Logros <span className="count-pill">{completos}/{juego.logros.length}</span></h3></div></div>{juego.logros.length === 0 ? <div className="inline-empty">Todavía no hay logros para este juego.</div> : <ul className="achievement-list detail-achievements">{juego.logros.map(l => <li key={l._id}><label className={l.obtenido ? 'achievement-done' : ''}><input type="checkbox" checked={l.obtenido} onChange={() => toggleLogro(l._id!, l.obtenido)}/><span className="check-custom">✓</span><span>{l.nombre}</span></label>{l.obtenido && <span className="achievement-new">OBTENIDO</span>}</li>)}</ul>}</section>
       <section className="panel detail-panel"><div className="panel-heading"><div><span className="eyebrow">TU HISTORIA</span><h3>Sesiones recientes</h3></div><Link className="text-link" to={`/partidas/nueva?videojuego=${juego._id}`}>＋ Añadir</Link></div>{partidas.length === 0 ? <div className="inline-empty">Registra una partida para empezar tu historial.</div> : <div className="session-list">{partidas.map(p => <article className="session-row" key={p._id}><span className="session-date">{new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span><div className="session-data"><strong>{p.duracionMinutos} min de juego</strong><span>{p.notas || 'Sesión registrada'}</span></div><span className="session-percent">{p.porcentajeAvance}%</span><div className="session-actions"><Link className="button button-secondary" aria-label="Editar partida" to={`/partidas/${p._id}/editar`}>Editar</Link><button className="button button-quiet" type="button" aria-label="Eliminar partida" onClick={() => eliminarPartida(p)}>Eliminar</button></div></article>)}</div>}</section></div>
-    {(metaActiva || formularioMetaAbierto) && <section className="panel goal-panel" aria-labelledby="goal-panel-title">
-      <div className="panel-heading">
-        <div><span className="eyebrow">RITMO A TU MEDIDA</span><h3 id="goal-panel-title">Meta semanal</h3></div>
-        {metaActiva && !formularioMetaAbierto && <div className="goal-actions">
-          <button className="button button-secondary" type="button" onClick={() => setFormularioMetaAbierto(true)}>Editar meta</button>
-          <button className="button button-quiet" type="button" onClick={() => desactivarMeta(metaActiva)}>Desactivar</button>
-        </div>}
-      </div>
-      {formularioMetaAbierto && id ? (
-        <FormularioMeta
-          key={metaActiva?._id ?? 'nueva'}
-          videojuegoId={id}
-          meta={metaActiva}
-          onGuardado={async () => {
-            await cargarDatos();
-            setFormularioMetaAbierto(false);
-          }}
-          onCancelar={() => setFormularioMetaAbierto(false)}
-        />
-      ) : metaActiva ? (
-        <div className="goal-summary">
-          <p>Tu objetivo actual para <strong>{juego.nombre}</strong>:</p>
-          <p><strong>{metaActiva.horasSemanales} horas</strong> y <strong>{metaActiva.diasPorSemana} días</strong> por semana.</p>
-          {metaActiva.hitos.length > 0 && <ul>
-            {metaActiva.hitos.map((hito, indice) => <li key={`${hito.porcentajeObjetivo}-${indice}`}>
-              {hito.descripcion} · {hito.porcentajeObjetivo}%
-            </li>)}
-          </ul>}
-        </div>
-      ) : null}
-    </section>}
+    {metaModalAbierto && <div className="goal-modal-backdrop" onMouseDown={event => {
+      if (event.target === event.currentTarget) {
+        setMetaModalAbierto(false);
+        setFormularioMetaAbierto(false);
+      }
+    }}>
+      <section className="goal-modal" role="dialog" aria-modal="true" aria-labelledby="goal-modal-title" tabIndex={-1}>
+        <header className="goal-modal-heading">
+          <div><span className="eyebrow">RITMO A TU MEDIDA</span><h2 id="goal-modal-title">Meta semanal</h2></div>
+          <button className="goal-modal-close" type="button" aria-label="Cerrar meta semanal" onClick={() => { setMetaModalAbierto(false); setFormularioMetaAbierto(false); }}>×</button>
+        </header>
+        {formularioMetaAbierto && id ? (
+          <FormularioMeta
+            key={metaActiva?._id ?? 'nueva'}
+            videojuegoId={id}
+            meta={metaActiva}
+            onGuardado={async () => {
+              await cargarDatos();
+              setFormularioMetaAbierto(false);
+              setMetaModalAbierto(false);
+            }}
+            onCancelar={() => { setFormularioMetaAbierto(false); setMetaModalAbierto(false); }}
+          />
+        ) : metaActiva ? (
+          <>
+            <div className="goal-summary">
+              <p>Tu objetivo actual para <strong>{juego.nombre}</strong>:</p>
+              <p><strong>{metaActiva.horasSemanales} horas</strong> y <strong>{metaActiva.diasPorSemana} días</strong> por semana.</p>
+              {metaActiva.hitos.length > 0 && <ul>
+                {metaActiva.hitos.map((hito, indice) => <li key={`${hito.porcentajeObjetivo}-${indice}`}>
+                  {hito.descripcion} · {hito.porcentajeObjetivo}%
+                </li>)}
+              </ul>}
+            </div>
+            <div className="goal-modal-actions">
+              <button className="button button-secondary" type="button" onClick={() => setFormularioMetaAbierto(true)}>Editar meta</button>
+              <button className="button button-quiet" type="button" onClick={() => desactivarMeta(metaActiva)}>Desactivar</button>
+            </div>
+          </>
+        ) : null}
+      </section>
+    </div>}
   </>;
 };
