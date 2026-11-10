@@ -34,9 +34,12 @@ describe('ProgresoSemanal', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('Mejor racha: 5 días')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Racha actual de 2 días' })).toBeInTheDocument();
-    expect(screen.getByText('Superar la primera zona · 25%')).toBeInTheDocument();
+    expect(screen.getByText('Superar la primera zona')).toBeInTheDocument();
     expect(screen.getByText('Alcanzado')).toBeInTheDocument();
     expect(screen.getByText('Pendiente')).toBeInTheDocument();
+    expect(screen.getByText('1 de 2 hitos alcanzados · 1 pendiente')).toBeInTheDocument();
+    expect(screen.getByText('El estado se actualiza con el porcentaje de avance de la última partida guardada.')).toBeInTheDocument();
+    expect(screen.getByText('Objetivo: 25% de avance')).toBeInTheDocument();
 
     const barra = screen.getByRole('progressbar', { name: 'Horas semanales: 120% del objetivo' });
     expect(barra).toHaveAttribute('aria-valuenow', '100');
@@ -95,5 +98,6 @@ describe('ProgresoSemanal', () => {
 
     expect(screen.getAllByText('0')).toHaveLength(3);
     expect(screen.getByText('Pendiente')).toBeInTheDocument();
+    expect(screen.getByText('0 de 1 hitos alcanzados · 1 pendiente')).toBeInTheDocument();
   });
 });

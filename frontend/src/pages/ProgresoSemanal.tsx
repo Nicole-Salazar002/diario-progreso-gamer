@@ -79,13 +79,26 @@ export const ProgresoSemanal: React.FC<ProgresoSemanalProps> = ({
 
       {progreso.hitos.length > 0 && (
         <div className="weekly-milestones">
-          <h4>Hitos de progreso</h4>
+          <div className="weekly-milestones-heading">
+            <div>
+              <h4>Hitos de progreso</h4>
+              <p>El estado se actualiza con el porcentaje de avance de la última partida guardada.</p>
+            </div>
+            <strong className="milestone-count">
+              {progreso.hitos.filter(hito => hito.alcanzado).length} de {progreso.hitos.length} hitos alcanzados
+              {' · '}
+              {progreso.hitos.filter(hito => !hito.alcanzado).length} pendiente{progreso.hitos.filter(hito => !hito.alcanzado).length === 1 ? '' : 's'}
+            </strong>
+          </div>
           <ul className="milestone-track">
             {progreso.hitos.map((hito, indice) => (
-              <li className={hito.alcanzado ? 'milestone-reached' : ''} key={`${hito.descripcion}-${indice}`} tabIndex={0}>
+              <li className={hito.alcanzado ? 'milestone-reached' : ''} key={`${hito.descripcion}-${indice}`}>
                 <span className="milestone-status" aria-hidden="true">{hito.alcanzado ? '✓' : '○'}</span>
-                <span>{hito.descripcion} · {hito.porcentajeObjetivo}%</span>
-                <strong>{hito.alcanzado ? 'Alcanzado' : 'Pendiente'}</strong>
+                <span className="milestone-copy">
+                  <strong>{hito.descripcion}</strong>
+                  <small>Objetivo: {hito.porcentajeObjetivo}% de avance</small>
+                </span>
+                <strong className="milestone-state">{hito.alcanzado ? 'Alcanzado' : 'Pendiente'}</strong>
               </li>
             ))}
           </ul>

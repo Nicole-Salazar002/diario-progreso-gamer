@@ -138,9 +138,11 @@ export const DetalleVideojuego: React.FC = () => {
             <div className="goal-summary">
               <p>Tu objetivo actual para <strong>{juego.nombre}</strong>:</p>
               <p><strong>{metaActiva.horasSemanales} horas</strong> y <strong>{metaActiva.diasPorSemana} días</strong> por semana.</p>
-              {metaActiva.hitos.length > 0 && <ul>
-                {metaActiva.hitos.map((hito, indice) => <li key={`${hito.porcentajeObjetivo}-${indice}`}>
+              {progresoSemanal.hitos.length > 0 && <ul>
+                {progresoSemanal.hitos.map((hito, indice) => <li key={`${hito.porcentajeObjetivo}-${indice}`}>
                   {hito.descripcion} · {hito.porcentajeObjetivo}%
+                  {' — '}
+                  <strong>{hito.alcanzado ? 'Alcanzado' : 'Pendiente'}</strong>
                 </li>)}
               </ul>}
             </div>
