@@ -17,7 +17,10 @@ export const obtenerProgresoSemanal = async (videojuegoId: string, fechaReferenc
     ? {
         horasSemanales: metaActiva.horasSemanales,
         diasPorSemana: metaActiva.diasPorSemana,
-        hitos: metaActiva.hitos
+        hitos: metaActiva.hitos.map(hito => ({
+          descripcion: hito.descripcion,
+          porcentajeObjetivo: hito.porcentajeObjetivo
+        }))
       }
     : null;
 

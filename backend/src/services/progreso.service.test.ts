@@ -41,11 +41,18 @@ const conReemplazos = async <T>(reemplazos: Reemplazo[], ejecutar: () => Promise
 };
 
 const videojuegoId = '507f1f77bcf86cd799439011';
-const metaActiva = {
+const metaActiva = new Meta({
+  videojuego: videojuegoId,
   horasSemanales: 5,
   diasPorSemana: 4,
-  hitos: [{ descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50 }]
-};
+  activa: true,
+  hitos: [
+    { descripcion: 'Llegar al 25 %', porcentajeObjetivo: 25 },
+    { descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50 },
+    { descripcion: 'Llegar al 75 %', porcentajeObjetivo: 75 },
+    { descripcion: 'Completar el juego', porcentajeObjetivo: 100 }
+  ]
+});
 const partidasConRachaRota = [
   { fecha: new Date('2026-11-07T17:00:00.000Z'), duracionMinutos: 120, porcentajeAvance: 60 },
   { fecha: new Date('2026-11-06T17:00:00.000Z'), duracionMinutos: 60, porcentajeAvance: 55 },
@@ -74,7 +81,12 @@ test('integra meta activa, cinco partidas, avance actual y racha rota', async ()
       diasJugadosSemana: 5,
       rachaActual: 2,
       mejorRacha: 3,
-      hitos: [{ descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50, alcanzado: true }]
+      hitos: [
+        { descripcion: 'Llegar al 25 %', porcentajeObjetivo: 25, alcanzado: true },
+        { descripcion: 'Llegar al 50 %', porcentajeObjetivo: 50, alcanzado: true },
+        { descripcion: 'Llegar al 75 %', porcentajeObjetivo: 75, alcanzado: false },
+        { descripcion: 'Completar el juego', porcentajeObjetivo: 100, alcanzado: false }
+      ]
     });
   });
 });
