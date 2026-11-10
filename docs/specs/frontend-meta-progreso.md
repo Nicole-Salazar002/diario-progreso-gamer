@@ -13,6 +13,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 - El detalle solicita el progreso semanal al endpoint definido en la spec backend y muestra el intervalo lunes–domingo devuelto por el servidor sin recalcular la zona horaria en el navegador.
 - Para editar la Meta activa, el detalle obtiene también las metas del videojuego y selecciona la que está activa; el endpoint de progreso no se usa como sustituto de la consulta de Meta.
 - Con meta activa, muestra horas jugadas y objetivo, porcentaje real (también si supera 100 %), días jugados y objetivo, racha actual, mejor racha e hitos y su estado.
+- La sección de hitos resume cuántos están alcanzados y cuántos quedan, explica que el estado depende del porcentaje de avance de la última partida guardada y presenta cada hito con su descripción, porcentaje objetivo y estado textual destacado. El estado no depende solo del color o de un icono.
 - El texto presenta el porcentaje real sin límite. La longitud visual de la barra sí se limita al intervalo visual de 0 a 100 %; su etiqueta accesible explica el valor real.
 - Sin meta activa, muestra las horas, días y rachas disponibles e invita a crear una meta cuando el estado del juego lo permite. Si el videojuego está completado o abandonado, explica que no se puede añadir una meta activa.
 - Sin partidas, muestra ceros y los hitos pendientes que existan; sin meta, no presenta objetivos ni hitos históricos como si fueran actuales.
@@ -52,6 +53,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 - Usar el progreso y el intervalo calculados por el servidor, sin volver a calcular reglas temporales en el navegador.
 - Mostrar el porcentaje de horas real, incluidos valores mayores que 100 %, aunque la barra visual se limite a 100 %.
 - Mostrar horas y días frente a su meta, racha actual, mejor racha e hitos con texto y estado legibles.
+- Hacer visibles el resumen de hitos alcanzados/pendientes, su porcentaje objetivo y la indicación de cómo se actualiza su estado.
 - Invitar a crear una meta cuando no haya una activa y el videojuego no esté completado ni abandonado.
 - Presentar explícitamente carga, error y vacío; permitir reintentar los datos que fallaron.
 - Proveer un formulario accesible para crear/editar Meta y sus hitos, con validación y errores del servidor.
@@ -77,6 +79,7 @@ Incluye tipos de datos, servicios HTTP separados de la presentación, sección d
 | Criterio | Verificación |
 |---|---|
 | CA-05.1 | Prueba del detalle con respuesta simulada: aparecen semana, horas/objetivo, días/objetivo, rachas e hitos con su estado. |
+| CA-05.4 | Prueba del progreso semanal: muestra el conteo de hitos alcanzados y pendientes, la explicación sobre el avance guardado y cada hito con su objetivo y estado textual. |
 | CA-05.2 | Prueba sin Meta: aparecen horas, días y rachas, no aparece porcentaje como cero y se ofrece crear Meta; prueba separada confirma el mensaje de juego completado/abandonado sin CTA de creación. |
 | CA-05.3 | Pruebas de carga, error y reintento; se comprueba que el error no representa valores faltantes como ceros o éxito. |
 | CA-06.1 | Prueba del formulario: crear con datos válidos y editar la Meta activa llaman al método correcto de `metasApi` y refrescan el detalle. |

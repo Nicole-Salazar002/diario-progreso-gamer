@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -180,9 +180,43 @@ describe('gestión de meta en el detalle', () => {
     expect(screen.getByText('2026-11-02')).toBeInTheDocument();
     expect(screen.getByText('3.5')).toBeInTheDocument();
     expect(screen.getByText('70% de tu objetivo')).toBeInTheDocument();
-    expect(screen.getByText('Llegar al 50 % · 50%')).toBeInTheDocument();
+    expect(screen.getByText('Llegar al 50 %')).toBeInTheDocument();
+    expect(screen.getByText('Objetivo: 50% de avance')).toBeInTheDocument();
     expect(screen.getByText('Alcanzado')).toBeInTheDocument();
     expect(screen.getByText('Mejor racha: 4 días')).toBeInTheDocument();
+  });
+
+  it('muestra en el detalle de la meta el estado calculado de cada hito', async () => {
+    const metaConHitos = {
+      ...meta,
+      hitos: [
+        { descripcion: 'Primera zona', porcentajeObjetivo: 25 },
+        { descripcion: 'Mitad del juego', porcentajeObjetivo: 50 },
+        { descripcion: 'Última zona', porcentajeObjetivo: 75 },
+        { descripcion: 'Juego terminado', porcentajeObjetivo: 100 }
+      ]
+    };
+    vi.mocked(metasApi.obtenerPorVideojuego).mockResolvedValue([metaConHitos]);
+    vi.mocked(videojuegosApi.obtenerProgresoSemanal).mockResolvedValue({
+      ...progreso,
+      hitos: [
+        { ...metaConHitos.hitos[0], alcanzado: true },
+        { ...metaConHitos.hitos[1], alcanzado: true },
+        { ...metaConHitos.hitos[2], alcanzado: false },
+        { ...metaConHitos.hitos[3], alcanzado: false }
+      ]
+    });
+    renderDetalle();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Ver meta semanal' }));
+    const dialogo = screen.getByRole('dialog', { name: 'Meta semanal' });
+
+    expect(within(dialogo).getByText('Primera zona · 25% —')).toBeInTheDocument();
+    expect(within(dialogo).getByText('Mitad del juego · 50% —')).toBeInTheDocument();
+    expect(within(dialogo).getByText('Última zona · 75% —')).toBeInTheDocument();
+    expect(within(dialogo).getByText('Juego terminado · 100% —')).toBeInTheDocument();
+    expect(within(dialogo).getAllByText('Alcanzado')).toHaveLength(2);
+    expect(within(dialogo).getAllByText('Pendiente')).toHaveLength(2);
   });
 
   it('muestra horas y rachas sin inventar porcentaje ni objetivos cuando no hay meta', async () => {

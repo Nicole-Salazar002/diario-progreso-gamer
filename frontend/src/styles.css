@@ -11,7 +11,7 @@
 @media (max-width: 999px){.session-row{flex-wrap:wrap}.session-data{flex:1;min-width:0}.session-actions{width:100%;display:flex;justify-content:flex-end;gap:6px}}
 @media (max-width: 650px){.table-actions{display:flex;flex-direction:column;gap:5px}.table-actions .button{padding:7px 9px;font-size:10px}}
 
-/* Ajustes de lectura y adaptación del detalle del videojuego */
+/* Ajustes de lectura y adaptaciï¿½n del detalle del videojuego */
 .detail-hero, .detail-columns, .weekly-progress-panel, .goal-panel { min-width: 0; }
 .detail-hero { grid-template-columns: minmax(110px, 150px) minmax(0, 1fr) minmax(100px, 125px); }
 .detail-copy, .detail-panel, .weekly-stat { min-width: 0; }
@@ -50,3 +50,25 @@
 
 /* Espacio entre el progreso semanal y las secciones inferiores */
 .detail-columns { margin-top: 18px; }
+
+.weekly-milestones-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
+.weekly-milestones-heading h4 { margin:0; font-size:14px; }
+.weekly-milestones-heading p { margin:5px 0 0; color:var(--muted); font-size:11px; line-height:1.5; }
+.milestone-count { flex:none; padding:8px 11px; border:1px solid #8e80e74d; border-radius:10px; background:#7770da16; color:#d5ceff; font-size:11px; }
+.weekly-milestones .milestone-track { gap:9px; }
+.weekly-milestones .milestone-track li { grid-template-columns:34px minmax(0,1fr) auto; gap:12px; padding:12px 14px; background:linear-gradient(110deg,#292a50,#242548); }
+.weekly-milestones .milestone-track li:hover { transform:none; }
+.weekly-milestones .milestone-status { display:grid; place-items:center; width:30px; height:30px; border:1px solid #8588bd55; border-radius:50%; background:#303158; color:#c0c2e8; font-size:15px; }
+.weekly-milestones .milestone-copy { display:grid; gap:4px; min-width:0; }
+.weekly-milestones .milestone-copy strong { color:var(--text); font-size:12px; line-height:1.4; }
+.weekly-milestones .milestone-copy small { color:var(--muted); font-size:11px; }
+.weekly-milestones .milestone-state { padding:6px 9px; border:1px solid #9699c344; border-radius:999px; background:#777b9a1a; color:#c1c3de; font-size:10px; white-space:nowrap; }
+.weekly-milestones .milestone-reached { border-color:#7bd9b366; background:linear-gradient(100deg,#62d7a413,#26274d 72%); }
+.weekly-milestones .milestone-reached .milestone-status { border-color:#7bd9b366; background:#62d7a41c; color:#87e0b5; }
+.weekly-milestones .milestone-reached .milestone-state { border-color:#7bd9b366; background:#62d7a41c; color:#a5edca; }
+@media(max-width:760px) {
+  .weekly-milestones-heading { flex-direction:column; }
+  .milestone-count { white-space:normal; }
+  .weekly-milestones .milestone-track li { grid-template-columns:34px minmax(0,1fr); }
+  .weekly-milestones .milestone-state { grid-column:2; justify-self:start; }
+}
